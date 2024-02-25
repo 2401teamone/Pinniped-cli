@@ -1,5 +1,8 @@
 import inquirer from "inquirer";
 // Get input from user with inquirer
+
+// .command("ask", "Use inquirer to prompt for your name", () => {}, inquire)
+
 const inquire = async () => {
   const answers = await inquirer.prompt([
     {
