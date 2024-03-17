@@ -1,0 +1,20 @@
+{
+  "coauthors": {
+    "jhgm": {
+      "name": "Jonathan Hurd",
+      "email": "hurd.jonathan@gmail.com"
+    },
+    "jlgm": {
+      "name": "Josh Lakenan",
+      "email": "joshualakenan@gmail.com"
+    },
+    "acgm": {
+      "name": "Alan Cho",
+      "email": "alancho397@gmail.com"
+    },
+    "trgm": {
+      "name": "Trevor Rees-Jones",
+      "email": "treesjones3@gmail.com"
+    }
+  }
+}
