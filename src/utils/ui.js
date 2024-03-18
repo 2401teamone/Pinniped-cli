@@ -2,6 +2,7 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import ora from "ora";
 import boxen from "boxen";
+import { fullLogo100 } from "./logo.js";
 
 //COLORS
 const SPINNER_COLOR = "magenta";
@@ -67,6 +68,7 @@ export const info = () => {
     "use `pinniped deploy` to deploy a project to an AWS EC2 instance",
   ];
 
+  console.log(colorStandard(fullLogo100));
   boxMsg(message.join("\n"));
 };
 
