@@ -1,8 +1,8 @@
 {
   "type": "module",
-  "name": "presto-base-cli",
-  "version": "0.0.2",
-  "description": "CLI tool for Creating, Managing, and Deploying your PrestoBase projects",
+  "name": "pinniped-cli",
+  "version": "0.0.4",
+  "description": "CLI tool for Creating, Managing, and Deploying your Pinniped projects",
   "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "bin": {
-    "presto": "./bin/index.js"
+    "pinniped": "./bin/index.js"
   },
   "dependencies": {
     "boxen": "^7.1.1",

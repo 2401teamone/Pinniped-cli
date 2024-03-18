@@ -8,7 +8,12 @@ import deploy from "./commands/deploy.js";
 // Define the CLI command with flags and options
 yargs(process.argv.slice(2))
   .command("info", "Display information about the CLI", () => {}, info)
-  .command("create", "Create a new project", () => {}, create)
+  .command(
+    "create",
+    "Create a new extendable backend project",
+    () => {},
+    create
+  )
   .command(
     "deploy",
     "Deploy a project to an AWS EC2 Instance",

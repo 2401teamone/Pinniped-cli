@@ -2,6 +2,7 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import ora from "ora";
 import boxen from "boxen";
+import { fullLogo100 } from "./logo.js";
 
 //COLORS
 const SPINNER_COLOR = "magenta";
@@ -43,7 +44,7 @@ export const getStarted = (answers) => {
     "-------------------------------------------",
     "For extension and deployement options, run:",
     "-------------------------------------------",
-    "Presto --help",
+    "pinniped --help",
   ];
 
   boxMsg(steps.join("\n"));
@@ -52,7 +53,9 @@ export const getStarted = (answers) => {
 const welcome = (answers) => {
   console.log(
     boxen(
-      chalk.greenBright(`Welcome to your new project: ${answers.projectName}`),
+      chalk.greenBright(
+        `Welcome to your new Pinniped project: ${answers.projectName}`
+      ),
       { padding: 1 }
     )
   );
@@ -60,11 +63,12 @@ const welcome = (answers) => {
 
 export const info = () => {
   const message = [
-    "Prestobase lightweight, extendable backend for conveniently create and deploying projects",
-    "use `presto create` to create a new project",
-    "use `presto deploy` to deploy a project to an AWS EC2 instance",
+    "Pinniped is a lightweight, extendable backend for conveniently creating and deploying projects",
+    "use `pinniped create` to create a new project",
+    "use `pinniped deploy` to deploy a project to an AWS EC2 instance",
   ];
 
+  console.log(colorStandard(fullLogo100));
   boxMsg(message.join("\n"));
 };
 
