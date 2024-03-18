@@ -1,27 +1,18 @@
-import pinniped from "pinniped";
+import { pnpd } from "pinniped";
 
-const app = pinniped.createApp();
+const app = pnpd();
 
 // Extensibility Invocations
+
+// add custom routes
 app.addRoute("GET", "/custom", (req, res, next) => {
   res.json({ custom: "elephant seals" });
 });
 
-// API Path is Reserved
-// app.addRoute("GET", "/api/custom", (req, res, next) => {
-//   res.json({ custom: "elephant seals" });
-// });
-
-// Handler is Invoked on "GET_ALL_ROWS" Event
-// app.onGetAllRows("random-table", "todos").add((event) => {
-//   console.log("RUNNING EVENT 1");
-//   if (event.table === "random-test") event.res.status(200).send();
-// });
-
-// app.onGetAllRows("todos").add((event) => {
-//   console.log("RUNNING EVENT 2");
-// });
-
-// app.onGetOneRow().add();
+// add event-driven functionality
+app.onGetAllRows().add((event) => {
+  console.log("Triggered event");
+  console.log(event);
+});
 
 app.start(3000);
