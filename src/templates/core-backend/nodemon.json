@@ -1,0 +1,4 @@
+{
+  "ignore": ["migrations/*.js", "migrations", "pnpd_data", "pnpd_data/*"],
+  "watch": []
+}
