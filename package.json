@@ -7,6 +7,24 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "contributors": [
+    {
+      "name": "Alan Cho",
+      "email": "alancho397@gmail.com"
+    },
+    {
+      "name": "Jonathan Hurd",
+      "email": "hurd.jonathan@gmail.com"
+    },
+    {
+      "name": "Josh Lakenan",
+      "email": "joshlakenan@gmail.com"
+    },
+    {
+      "name": "Trevor Rees-Jones",
+      "eail": "treesjones3@gmail.com"
+    }
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
