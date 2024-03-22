@@ -7,10 +7,10 @@
     "start": "node index.js",
     "prod": "node ./dist/Pinniped.js",
     "dev": "nodemon index.js",
-    "reset-db": "rm -f pnpd_data/pnpd.db && touch pnpd_data/pnpd.db && npm run seed-data",
+    "reset-all": "npm run reset-sessions && npm run reset-migrations && npm run reset-db",
+    "reset-db": "rm -f pnpd_data/pnpd.db && touch pnpd_data/pnpd.db && rm -f pnpd_data/pnpd.db-wal && rm -f pnpd_data/pnpd.db-shm",
     "reset-sessions": "rm -f pnpd_data/session.db && touch pnpd_data/session.db",
     "reset-migrations": "rm -r pnpd_data/migrations && sqlite3 pnpd_data/pnpd.db < pnpd_data/drop-migrations.sql",
-    "seed-data": "sqlite3 pnpd_data/pnpd.db < pnpd_data/seed-data.sql",
     "build": "npx parcel build index.js && npm run build-cleanup",
     "build-cleanup": "rm -rf .parcel-cache"
   },
