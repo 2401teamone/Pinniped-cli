@@ -10,9 +10,8 @@ app.addRoute("GET", "/custom", (req, res, next) => {
 });
 
 // add event-driven functionality
-app.onGetAllRows().add((event) => {
+app.onGetOneRow("seals").add((event) => {
   console.log("Triggered event");
-  console.log(event);
 });
 
 app.start(3000);
