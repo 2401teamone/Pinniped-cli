@@ -15,7 +15,7 @@ async function createSecurityGroup() {
     // Specify parameters for creating the security group
     const securityGroupParams = {
       Description: "Allow SSH, HTTP, and HTTPS traffic",
-      GroupName: "Pinniped-Security3",
+      GroupName: "Pinniped-Security4",
     };
 
     // Create the security group
@@ -55,6 +55,8 @@ async function createSecurityGroup() {
       new AuthorizeSecurityGroupIngressCommand(authorizeParams)
     );
     console.log("Ingress traffic authorized for security group");
+
+    return GroupId;
   } catch (error) {
     console.error("Error creating security group:", error);
   }
@@ -64,7 +66,7 @@ async function createKeyPair() {
   try {
     // Specify parameters for creating the key pair
     const params = {
-      KeyName: "pinniped-open",
+      KeyName: "pinniped-open1",
     };
 
     // Create the key pair
@@ -72,7 +74,7 @@ async function createKeyPair() {
     console.log("Key pair created:", data.KeyName);
 
     // Write the key material to a PEM file
-    await writeFile("pinniped-open.pem", data.KeyMaterial);
+    await writeFile("pinniped-open1.pem", data.KeyMaterial);
   } catch (error) {
     console.error("Error creating key pair:", error);
   }
@@ -84,7 +86,7 @@ async function launchInstance(securityGroupId) {
     const instanceParams = {
       ImageId: "ami-0b8b44ec9a8f90422", // AMI ID
       InstanceType: "t2.nano", // Instance type
-      KeyName: "pinniped-open", // Key pair name
+      KeyName: "pinniped-open1", // Key pair name
       MinCount: 1,
       MaxCount: 1,
       SecurityGroupIds: [securityGroupId], // Use the created security group ID
@@ -101,9 +103,8 @@ async function launchInstance(securityGroupId) {
 
 // Execute the functions sequentially
 (async () => {
-  await createSecurityGroup();
+  const securityGroupID = await createSecurityGroup();
   await createKeyPair();
-  // Assuming the security group ID is known after creation, or you can retrieve it from a previous step
-  const securityGroupId = "sg-1234567890"; // Replace with the actual security group ID
-  await launchInstance(securityGroupId);
+
+  await launchInstance(securityGroupID);
 })();
