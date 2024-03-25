@@ -36,13 +36,13 @@ export const getStarted = (answers) => {
   const steps = [
     `Welcome to your new project: ${answers.projectName}`,
     "-------------------------------------------",
-    "To get starded, run the following commands:",
+    "To get started, run the following commands:",
     "-------------------------------------------",
     `1. cd ${answers.projectName}`,
     "2. npm install",
     "3. npm start",
     "-------------------------------------------",
-    "For extension and deployement options, run:",
+    "For extension and deployment options, run:",
     "-------------------------------------------",
     "pinniped --help",
   ];
@@ -63,9 +63,24 @@ const welcome = (answers) => {
 
 export const info = () => {
   const message = [
-    "Pinniped is a lightweight, extendable backend for conveniently creating and deploying projects",
-    "use `pinniped create` to create a new project",
-    "use `pinniped deploy` to deploy a project to an AWS EC2 instance",
+    "Pinniped is a lightweight, extendable backend for conveniently creating and deploying projects.",
+    "\n",
+    "----------- Pinniped CLI Commands ------------",
+    "Run `pinniped create` to create a new project.",
+    "Run `pinniped deploy` to deploy a project to an AWS EC2 instance.",
+    "\n",
+    "------- Development and Build Commands -------",
+
+    "Run `npm start` to run the backend.",
+    "Run `npm run dev` to run the backend with nodemon enabled for ease of development.",
+    "Run `npm build` inside your project directory to minify your server into the `dist` folder.",
+    "Run `npm run prod` to run your built server from the `dist` folder.",
+    "\n",
+    "------------- Database Commands --------------",
+    "Run `npm reset-all` to reset the main database, sessions, and migrations.",
+    "Run `npm reset-db` to reset the main database.",
+    "Run `npm reset-sessions` to reset the sessions database.",
+    "Run `npm reset-migrations` to reset the migrations database.",
   ];
 
   console.log(colorStandard(fullLogo100));
