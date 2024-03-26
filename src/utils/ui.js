@@ -11,6 +11,37 @@ const SUCCESS = "greenBright";
 const ERROR = "redBright";
 const BOX_COLOR = "blue";
 
+//DEPLOYMENT OPTIONS
+export const regions = [
+  "us-east-1",
+  "us-east-2",
+  "us-west-1",
+  "us-west-2",
+  "af-south-1",
+  "ap-east-1",
+  "ap-south-1",
+  "ap-northeast-2",
+  "ap-southeast-1",
+  "ap-southeast-2",
+  "ap-northeast-1",
+  "ca-central-1",
+  "eu-central-1",
+  "eu-west-1",
+  "eu-west-2",
+  "eu-west-3",
+  "eu-north-1",
+  "me-south-1",
+  "sa-east-1",
+];
+
+export const instanceTypes = [
+  "t2.micro",
+  "t2.medium",
+  "t2.large",
+  "t2.xlarge",
+  "t2.2xlarge",
+];
+
 //LOGGING FUNCTIONS
 export const print = (message) => {
   console.log(message);
@@ -88,6 +119,8 @@ export const info = () => {
 };
 
 export default {
+  regions,
+  instanceTypes,
   colorError,
   colorSuccess,
   colorStandard,
