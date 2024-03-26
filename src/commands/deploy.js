@@ -4,6 +4,7 @@ import ui from "../utils/ui.js";
 import provision from "../utils/provision.js";
 import runCommandOnEC2 from "../utils/runEC2Command.js";
 import setFilePermissions from "../utils/setFilePermissions.js";
+import uploadFilesToEC2 from "../utils/uploadFilesToEC2.js";
 
 const deploy = async (agrv) => {
   // Get the region and instance type from the user
@@ -33,6 +34,12 @@ const deploy = async (agrv) => {
       )
     );
 
+    // const connectionParams = {
+    //   hostName: "18.227.89.231",
+    //   username: "ubuntu",
+    //   privateKeyPath: "seal6.pem",
+    // };
+
     const connectionParams = await provision(answers);
     spinner.text = "Installing node.js on the EC2 instance";
 
@@ -44,22 +51,19 @@ const deploy = async (agrv) => {
       "DEBIAN_FRONTEND=noninteractive curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs";
 
     // Delay for 15 seconds to allow the EC2 instance to be fully provisioned
-    await new Promise((resolve) => setTimeout(resolve, 15000));
+    await new Promise((resolve) => setTimeout(resolve, 20000));
 
     // Run a command on the EC2 instance to install Node.js
     await runCommandOnEC2(connectionParams, installNodeCmd);
 
-    // spinner.text("Copying project files to the EC2 instance");
-    spinner.succeed(
-      ui.colorSuccess(
-        `EC2 instance provisioned successfully in ${answers.region}`
-      )
-    );
-
     // Copy the project directory to the EC2 instance
     spinner.text = "Copying project files to the EC2 instance";
+
+    await uploadFilesToEC2(connectionParams);
+
+    spinner.succeed(ui.colorSuccess("Project files copied successfully"));
   } catch (err) {
-    console.error("Error copying example project directory:", err);
+    console.error("Error copying project directory:", err);
     spinner.fail(ui.colorError("Project deployment failed"));
   }
 };
