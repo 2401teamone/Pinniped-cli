@@ -1,24 +1,46 @@
-import { NodeSSH } from "node-ssh";
+import { Client } from "ssh2";
+import { readFileSync } from "fs";
 
 export default async function runCommandOnEC2(connectionParams, command) {
-  const ssh = new NodeSSH();
+  const { hostName, username, privateKeyPath } = connectionParams;
+
+  const sshClient = new Client();
 
   try {
-    await ssh.connect({
-      host: connectionParams.hostName,
-      username: connectionParams.username,
-      privateKeyPath: connectionParams.privateKeyPath,
-      port: 22,
+    await new Promise((resolve, reject) => {
+      sshClient.on("error", reject);
+      sshClient.on("ready", resolve);
+      sshClient.connect({
+        host: hostName,
+        username: username,
+        privateKey: readFileSync(privateKeyPath),
+        port: 22,
+      });
     });
 
     console.log("Connected to the server");
 
-    const result = await ssh.execCommand(command);
+    const { stdout, stderr } = await new Promise((resolve, reject) => {
+      sshClient.exec(command, (err, stream) => {
+        if (err) return reject(err);
+        let stdout = "";
+        let stderr = "";
+        stream
+          .on("data", (data) => (stdout += data.toString()))
+          .on("error", (err) => reject(err))
+          .on("close", (code) => {
+            if (code !== 0) {
+              reject(new Error(`Command failed with code ${code}`));
+            } else {
+              resolve({ stdout, stderr });
+            }
+          });
+      });
+    });
 
-    console.log("STDOUT:", result.stdout);
-
-    console.log("STDERR:", result.stderr);
-    ssh.dispose();
+    console.log("STDOUT:", stdout);
+    console.log("STDERR:", stderr);
+    sshClient.end();
   } catch (error) {
     console.error("Error:", error);
   }
