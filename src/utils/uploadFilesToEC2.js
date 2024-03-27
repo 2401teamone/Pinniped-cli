@@ -158,13 +158,15 @@ async function sendFile(sshClient, localPath, remotePath) {
 // Filter function to exclude node_modules and package-lock.json
 const filterFunc = (fileName) => {
   return (
-    !["node_modules", "package-lock.json"].includes(fileName) &&
-    !fileName.endsWith(".pem")
+    !["node_modules", "package-lock.json", "instanceData.json"].includes(
+      fileName
+    ) && !fileName.endsWith(".pem")
   );
 };
 
 // Connect the given sshClient to the server specified in the connectionParams
 async function sshConnect(sshClient, connectionParams) {
+  console.log(connectionParams);
   const { hostName, username, privateKeyPath } = connectionParams;
   return await new Promise((resolve, reject) => {
     sshClient.on("error", reject);

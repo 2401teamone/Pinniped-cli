@@ -12,7 +12,7 @@ import { writeFile } from "fs/promises";
 const AMI_ID = "ami-0b8b44ec9a8f90422";
 const USERNAME = "ubuntu";
 
-export default async function provision(answers) {
+export default async function provisionEC2(answers) {
   // Create EC2 service client
   const ec2Client = new EC2Client({ region: answers.region });
 

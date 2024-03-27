@@ -1,76 +1,51 @@
-import fs from "fs-extra";
+// Purpose: Deploy the project to the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
-import provision from "../utils/provision.js";
-import runCommandOnEC2 from "../utils/runEC2Command.js";
-import setFilePermissions from "../utils/setFilePermissions.js";
 import uploadFilesToEC2 from "../utils/uploadFilesToEC2.js";
+import { readInstanceData } from "../utils/instanceData.js";
 
 const deploy = async (agrv) => {
-  // Get the region and instance type from the user
-  let answers = await inquirer.prompt([
+  const instanceData = await readInstanceData();
+
+  const instanceChoices = instanceData.map((instance, idx) => ({
+    name:
+      idx === 0 ? `${instance.ipAddress} (Most Recent)` : instance.ipAddress,
+    value: idx,
+  }));
+
+  const answers = await inquirer.prompt([
     {
       type: "list",
-      name: "region",
-      message: "Select the AWS region for deployment:",
-      choices: ui.regions.map((region) => ({ name: region, value: region })),
-    },
-    {
-      type: "list",
-      name: "instanceType",
-      message: "Select the EC2 instance type for deployment:",
-      choices: ui.instanceTypes.map((type) => ({ name: type, value: type })),
+      name: "instance",
+      message: "Select the IP adress of the EC2 instance for deployment:",
+      choices: instanceChoices,
     },
   ]);
 
-  // Get the name of the current working directory
-  answers.projectName = process.cwd().split("/").pop();
-
   try {
-    // //start a loading spinner
-    // const spinner = ui.runSpinner(
-    //   ui.colorStandard(
-    //     `Provisioning AWS EC2 instance. This may take a few minutes...`
-    //   )
-    // );
+    //start a loading spinner
+    const spinner = ui.runSpinner(
+      ui.colorStandard(
+        `Connecting to AWS EC2 instance. This may take a few seconds...`
+      )
+    );
 
     const connectionParams = {
-      hostName: "18.222.27.129",
-      username: "ubuntu",
-      privateKeyPath: "Seals10.pem",
+      hostName: instanceData[answers.instance].ipAddress,
+      username: instanceData[answers.instance].userName,
+      privateKeyPath: instanceData[answers.instance].sshKey,
     };
-
-    // const connectionParams = await provision(answers);
-    // spinner.text = "Installing node.js on the EC2 instance";
-
-    // await setFilePermissions(connectionParams.privateKeyPath);
-
-    // console.log("Connection Params:", connectionParams);
-
-    // const installNodeCmd =
-    //   "DEBIAN_FRONTEND=noninteractive curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs";
-
-    // // Delay for 15 seconds to allow the EC2 instance to be fully provisioned
-    // await new Promise((resolve) => setTimeout(resolve, 20000));
-
-    // // Run a command on the EC2 instance to install Node.js
-    // await runCommandOnEC2(connectionParams, installNodeCmd);
-
-    // // Copy the project directory to the EC2 instance
-    // spinner.text = "Copying project files to the EC2 instance";
 
     await uploadFilesToEC2(connectionParams);
 
-    // spinner.succeed(ui.colorSuccess("Project files copied successfully"));
+    spinner.succeed(ui.colorSuccess("Project files copied successfully"));
+
+    ui.boxMsg("Run `pinniped start` to start your server on the EC2 instance");
   } catch (err) {
     // console.error("Error copying project directory:", err);
+    spinner.fail(ui.colorError("Project deployment failed"));
     console.log(err);
-    // spinner.fail(ui.colorError("Project deployment failed"));
   }
 };
 
 export default deploy;
-
-/*
-ssh -v -i Seals10.pem ubuntu@ec2-18-222-27-129.us-east-2.compute.amazonaws.com
-*/

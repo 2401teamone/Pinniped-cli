@@ -4,6 +4,7 @@ import chalk from "chalk";
 import info from "./commands/info.js";
 import create from "./commands/create.js";
 import deploy from "./commands/deploy.js";
+import provision from "./commands/provision.js";
 
 // Define the CLI command with flags and options
 yargs(process.argv.slice(2))
@@ -15,8 +16,14 @@ yargs(process.argv.slice(2))
     create
   )
   .command(
+    "provision",
+    "Provision a new AWS EC2 Instance for your project",
+    () => {},
+    provision
+  )
+  .command(
     "deploy",
-    "Deploy a project to an AWS EC2 Instance",
+    "Deploy your project to an AWS EC2 Instance",
     () => {},
     deploy
   )
