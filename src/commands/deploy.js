@@ -41,6 +41,8 @@ const deploy = async (agrv) => {
 
     const sshClient = new SSHClient(connectionParams, spinner);
 
+    await sshClient.connect();
+
     await sshClient.syncFiles(localDirPath, remoteDirPath, "deploy");
 
     await sshClient.runCommand("installDependencies");

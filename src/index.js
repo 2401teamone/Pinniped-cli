@@ -3,30 +3,24 @@ import chalk from "chalk";
 
 import info from "./commands/info.js";
 import create from "./commands/create.js";
-import deploy from "./commands/deploy.js";
 import provision from "./commands/provision.js";
+import deploy from "./commands/deploy.js";
+import start from "./commands/start.js";
+import stop from "./commands/stop.js";
 
 // Define the CLI command with flags and options
 yargs(process.argv.slice(2))
   .command("info", "Display information about the CLI", () => {}, info)
-  .command(
-    "create",
-    "Create a new extendable backend project",
-    () => {},
-    create
-  )
+  .command("create", "Create a new extendable backend app", () => {}, create)
   .command(
     "provision",
-    "Provision a new AWS EC2 Instance for your project",
+    "Provision a new AWS EC2 Instance for your app",
     () => {},
     provision
   )
-  .command(
-    "deploy",
-    "Deploy your project to an AWS EC2 Instance",
-    () => {},
-    deploy
-  )
+  .command("deploy", "Deploy your app to an AWS EC2 Instance", () => {}, deploy)
+  .command("start", "Start your app on an AWS EC2 Instance", () => {}, start)
+  .command("stop", "Stop your app on an AWS EC2 Instance", () => {}, stop)
   .strict()
   .demandCommand(
     1,

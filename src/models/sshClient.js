@@ -1,8 +1,7 @@
 import { Client } from "ssh2";
 import { readFileSync, readdirSync, statSync } from "fs";
 import path from "path";
-
-const DESTINATION_BASE_PATH = "/home/ubuntu/server";
+const BASE_DIR = "/home/ubuntu/server";
 
 export default class SSHClient {
   constructor(connectionParams, spinner) {
@@ -47,7 +46,7 @@ export default class SSHClient {
     await this.connect();
     const command = SSHClient.commands[commandKey];
 
-    this.spinner.text = `Running ${commandKey} comnmand on the EC2 instance`;
+    this.spinner.text = `Running ${commandKey} command on the EC2 instance`;
 
     const { stdout, stderr } = await new Promise((resolve, reject) => {
       this.sshClient.exec(command, (err, stream) => {
@@ -68,8 +67,6 @@ export default class SSHClient {
     });
 
     this.spinner.text = "Command executed successfully";
-
-    this.closeConnection();
   }
 
   async syncFiles(localDirPath, remoteDirPath, filterKey) {
@@ -89,7 +86,7 @@ export default class SSHClient {
     this.spinner.text = "Copying project files to EC2 instance";
     for (const item of items) {
       const localItemPath = path.join(localDirPath, item);
-      const remoteItemPath = path.join(DESTINATION_BASE_PATH, item);
+      const remoteItemPath = path.join(remoteDirPath, item);
 
       await this.uploadRecursive(localItemPath, remoteItemPath, filterFunc);
     }
@@ -122,6 +119,9 @@ export default class SSHClient {
 
   // Send a file to the EC2 instance
   async sendFile(localPath, remotePath) {
+    if (this.sftp === undefined) {
+      await this.sftpConnect();
+    }
     return await new Promise((resolve, reject) => {
       this.sftp.fastPut(localPath, remotePath, (err) => {
         if (err) {
@@ -194,6 +194,9 @@ export default class SSHClient {
     installNode:
       "DEBIAN_FRONTEND=noninteractive curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs",
     test: "touch test.txt",
-    installDependencies: "npm install --prefix server",
+    installDependencies: "cd server/ && npm install",
+    installPM2: "sudo npm install pm2 -g",
+    start: "cd server/ && sudo pm2 start index.js",
+    stop: "sudo pm2 stop 0",
   };
 }

@@ -50,12 +50,14 @@ const provision = async (agrv) => {
 
     await sshClient.runCommand("installNode");
 
+    await sshClient.runCommand("installPM2");
+
     sshClient.closeConnection();
 
     spinner.succeed(ui.colorSuccess("Ec2 instance provisioned successfully"));
 
     ui.boxMsg(
-      "EC2 instance details are avialable in the `instanceData.json` file in your project directory" +
+      "EC2 instance details are available in the `instanceData.json` file in your project directory" +
         "\nRun `pinniped deploy` to deploy the project to the EC2 instance"
     );
   } catch (err) {
