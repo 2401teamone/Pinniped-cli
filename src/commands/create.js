@@ -17,9 +17,6 @@ const create = async (argv) => {
     ui.colorStandard(`Creating project: ${answers.projectName}...`)
   );
 
-  //add a 2 second delay to simiulate a more complex process
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-
   try {
     //copy the template to the new project directory
     copyTemplate("core-backend", answers.projectName);

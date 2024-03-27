@@ -12,6 +12,7 @@ import { writeFile } from "fs/promises";
 const AMI_ID = "ami-0b8b44ec9a8f90422";
 const ARM_AMI_ID = "ami-0000456e99b2b6a9d";
 const USERNAME = "ubuntu";
+const SECURITY_GROUP = "Pinniped-Security";
 
 export default async function provisionEC2(answers, spinner) {
   // Create EC2 service client
@@ -20,7 +21,7 @@ export default async function provisionEC2(answers, spinner) {
   // Create "Pinniped-Security" and configure security group if it does not exist
   let securityGroupID = await getSecurityGroupId(ec2Client);
   if (!securityGroupID) {
-    securityGroupID = await createSecurityGroup(ec2Client);
+    securityGroupID = await createSecurityGroup(ec2Client, spinner);
   }
 
   // Create EC2 key pair for SSH access
@@ -53,7 +54,7 @@ export async function getSecurityGroupId(ec2Client) {
       Filters: [
         {
           Name: "group-name",
-          Values: ["Pinniped-Security"],
+          Values: [SECURITY_GROUP],
         },
       ],
     };
@@ -81,7 +82,7 @@ export async function createSecurityGroup(ec2Client, spinner) {
     // Specify parameters for creating the security group
     const securityGroupParams = {
       Description: "Allow SSH, HTTP, and HTTPS traffic",
-      GroupName: "Pinniped-Security",
+      GroupName: SECURITY_GROUP,
     };
 
     // Create the security group
