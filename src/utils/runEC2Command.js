@@ -1,7 +1,11 @@
 import { Client } from "ssh2";
 import { readFileSync } from "fs";
 
-export default async function runCommandOnEC2(connectionParams, command) {
+export default async function runCommandOnEC2(
+  connectionParams,
+  command,
+  spinner
+) {
   const { hostName, username, privateKeyPath } = connectionParams;
 
   const sshClient = new Client();
@@ -18,7 +22,7 @@ export default async function runCommandOnEC2(connectionParams, command) {
       });
     });
 
-    console.log("Connected to the server");
+    spinner.text = "Connected to the server. Running command...";
 
     const { stdout, stderr } = await new Promise((resolve, reject) => {
       sshClient.exec(command, (err, stream) => {
@@ -38,8 +42,7 @@ export default async function runCommandOnEC2(connectionParams, command) {
       });
     });
 
-    console.log("STDOUT:", stdout);
-    console.log("STDERR:", stderr);
+    spinner.text = "Command executed successfully";
     sshClient.end();
   } catch (error) {
     console.error("Error:", error);

@@ -36,14 +36,12 @@ const deploy = async (agrv) => {
       privateKeyPath: instanceData[answers.instance].sshKey,
     };
 
-    await uploadFilesToEC2(connectionParams);
+    await uploadFilesToEC2(connectionParams, spinner);
 
     spinner.succeed(ui.colorSuccess("Project files copied successfully"));
 
     ui.boxMsg("Run `pinniped start` to start your server on the EC2 instance");
   } catch (err) {
-    // console.error("Error copying project directory:", err);
-    spinner.fail(ui.colorError("Project deployment failed"));
     console.log(err);
   }
 };

@@ -34,7 +34,7 @@ const provision = async (agrv) => {
       )
     );
 
-    const connectionParams = await provisionEC2(answers);
+    const connectionParams = await provisionEC2(answers, spinner);
 
     // Add the IP address of the EC2 instance to the instances.json file
     await storeInstanceData(connectionParams);
@@ -50,7 +50,8 @@ const provision = async (agrv) => {
     await new Promise((resolve) => setTimeout(resolve, 20000));
 
     // Run a command on the EC2 instance to install Node.js
-    await runCommandOnEC2(connectionParams, installNodeCmd);
+    await runCommandOnEC2(connectionParams, installNodeCmd, spinner);
+
     spinner.succeed(ui.colorSuccess("Ec2 instance provisioned successfully"));
 
     ui.boxMsg(

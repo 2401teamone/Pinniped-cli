@@ -10,9 +10,10 @@ import {
 import { writeFile } from "fs/promises";
 
 const AMI_ID = "ami-0b8b44ec9a8f90422";
+const ARM_AMI_ID = "ami-0000456e99b2b6a9d";
 const USERNAME = "ubuntu";
 
-export default async function provisionEC2(answers) {
+export default async function provisionEC2(answers, spinner) {
   // Create EC2 service client
   const ec2Client = new EC2Client({ region: answers.region });
 
@@ -23,11 +24,11 @@ export default async function provisionEC2(answers) {
   }
 
   // Create EC2 key pair for SSH access
-  await createKeyPair(ec2Client, answers.projectName);
+  await createKeyPair(ec2Client, answers.projectName, spinner);
 
   // Specify parameters for launching the EC2 instance
   const instanceParams = {
-    ImageId: AMI_ID,
+    ImageId: ARM_AMI_ID,
     InstanceType: answers.instanceType, // Instance type
     KeyName: answers.projectName, // Key pair name
     MinCount: 1,
@@ -36,7 +37,7 @@ export default async function provisionEC2(answers) {
   };
 
   // Launch an EC2 instance with the created security group
-  const { hostName } = await launchInstance(ec2Client, instanceParams);
+  const { hostName } = await launchInstance(ec2Client, instanceParams, spinner);
 
   return {
     hostName,
@@ -75,7 +76,7 @@ export async function getSecurityGroupId(ec2Client) {
   }
 }
 
-export async function createSecurityGroup(ec2Client) {
+export async function createSecurityGroup(ec2Client, spinner) {
   try {
     // Specify parameters for creating the security group
     const securityGroupParams = {
@@ -87,7 +88,7 @@ export async function createSecurityGroup(ec2Client) {
     const { GroupId } = await ec2Client.send(
       new CreateSecurityGroupCommand(securityGroupParams)
     );
-    console.log("Security group created with ID:", GroupId);
+    spinner.text = `Security group created with ID:, ${GroupId}`;
 
     // Specify parameters for authorizing ingress traffic
     const authorizeParams = {
@@ -118,7 +119,7 @@ export async function createSecurityGroup(ec2Client) {
     await ec2Client.send(
       new AuthorizeSecurityGroupIngressCommand(authorizeParams)
     );
-    console.log("Ingress traffic authorized for security group");
+    spinner.text = "Ingress traffic authorized for security group";
 
     return GroupId;
   } catch (error) {
@@ -133,11 +134,11 @@ export async function createSecurityGroup(ec2Client) {
  * @returns {string} The file name of the key pair
  * @throws {Error} If an error occurs
  */
-export async function createKeyPair(ec2Client, KeyName) {
+export async function createKeyPair(ec2Client, KeyName, spinner) {
   try {
     // Create the key pair
     const data = await ec2Client.send(new CreateKeyPairCommand({ KeyName }));
-    console.log("Key pair created:", data.KeyName);
+    spinner.text = `Key pair created:, ${data.KeyName}`;
 
     // Write the key material to a PEM file
     const fileName = `${KeyName}.pem`;
@@ -155,13 +156,12 @@ export async function createKeyPair(ec2Client, KeyName) {
  * @returns {Object} The data of the launched instance and the public IPv4 address
  * @throws {Error} If an error occurs
  */
-export async function launchInstance(ec2Client, instanceParams) {
+export async function launchInstance(ec2Client, instanceParams, spinner) {
   try {
     // Launch the EC2 instance
     const data = await ec2Client.send(new RunInstancesCommand(instanceParams));
-    console.log("Created instance:", data.Instances[0].InstanceId);
 
-    console.log("Waiting for the instance to be running...");
+    spinner.text = "Instance initializing...";
 
     // Describe the instance to retrieve its state
     const describeParams = {
@@ -180,7 +180,7 @@ export async function launchInstance(ec2Client, instanceParams) {
       }
     }
 
-    console.log("Instance is now running.");
+    spinner.text = "Instance is now running";
 
     // Describe the instance again to retrieve public IPv4 address (host name)
     const describeData = await ec2Client.send(
@@ -188,8 +188,6 @@ export async function launchInstance(ec2Client, instanceParams) {
     );
     const publicIpAddress =
       describeData.Reservations[0].Instances[0].PublicIpAddress;
-
-    console.log("Host name (Public IPv4 address):", publicIpAddress);
 
     // Return the data along with the public IPv4 address (host name)
     return { instanceData: data, hostName: publicIpAddress };
