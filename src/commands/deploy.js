@@ -1,41 +1,48 @@
-import fs from "fs-extra";
+// Purpose: Deploy the project to the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
+import uploadFilesToEC2 from "../utils/uploadFilesToEC2.js";
+import { readInstanceData } from "../utils/instanceData.js";
 
-const deploy = async (argv) => {
-  // Get list of directories in the current working directory
-  const directories = fs
-    .readdirSync(process.cwd(), { withFileTypes: true })
-    .filter((dirEntity) => dirEntity.isDirectory())
-    .map((directory) => directory.name);
+const deploy = async (agrv) => {
+  const instanceData = await readInstanceData();
 
-  // Prompt the user to select a project directory
+  const instanceChoices = instanceData.map((instance, idx) => ({
+    name:
+      idx === 0 ? `${instance.ipAddress} (Most Recent)` : instance.ipAddress,
+    value: idx,
+  }));
+
   const answers = await inquirer.prompt([
     {
       type: "list",
-      name: "projectName",
-      message: "Select a project to deploy:",
-      choices: directories,
+      name: "instance",
+      message: "Select the IP adress of the EC2 instance for deployment:",
+      choices: instanceChoices,
     },
   ]);
 
-  console.log(answers);
-
-  //start a loading spinner
-  const spinner = ui.runSpinner(
-    ui.colorStandard(`Deploying Project: ${answers.projectName}...`)
-  );
-
   try {
-    //Deploy the project...somehow
+    //start a loading spinner
+    const spinner = ui.runSpinner(
+      ui.colorStandard(
+        `Connecting to AWS EC2 instance. This may take a few seconds...`
+      )
+    );
 
-    //add a 2 second delay to simiulate a more complex process
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const connectionParams = {
+      hostName: instanceData[answers.instance].ipAddress,
+      username: instanceData[answers.instance].userName,
+      privateKeyPath: instanceData[answers.instance].sshKey,
+    };
 
-    spinner.succeed(ui.colorSuccess("Project deployed!"));
+    await uploadFilesToEC2(connectionParams, spinner);
+
+    spinner.succeed(ui.colorSuccess("Project files copied successfully"));
+
+    ui.boxMsg("Run `pinniped start` to start your server on the EC2 instance");
   } catch (err) {
-    console.error("Error copying example project directory:", err);
-    spinner.fail(ui.colorError("Project deployment failed"));
+    console.log(err);
   }
 };
 
