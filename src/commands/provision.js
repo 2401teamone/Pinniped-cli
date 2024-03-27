@@ -2,9 +2,9 @@
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
 import provisionEC2 from "../utils/provisionEC2.js";
-import runCommandOnEC2 from "../utils/runEC2Command.js";
 import setFilePermissions from "../utils/setFilePermissions.js";
 import { storeInstanceData } from "../utils/instanceData.js";
+import SSHClient from "../models/sshClient.js";
 
 const provision = async (agrv) => {
   // Get the region and instance type from the user
@@ -39,18 +39,18 @@ const provision = async (agrv) => {
     // Add the IP address of the EC2 instance to the instances.json file
     await storeInstanceData(connectionParams);
 
-    spinner.text = "Installing node.js on the EC2 instance";
-
     await setFilePermissions(connectionParams.privateKeyPath);
 
-    const installNodeCmd =
-      "DEBIAN_FRONTEND=noninteractive curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs";
-
+    spinner.text = "Performing status checks...";
     // Delay for 15 seconds to allow the EC2 instance to be fully provisioned
     await new Promise((resolve) => setTimeout(resolve, 20000));
 
     // Run a command on the EC2 instance to install Node.js
-    await runCommandOnEC2(connectionParams, installNodeCmd, spinner);
+    const sshClient = new SSHClient(connectionParams, spinner);
+
+    await sshClient.runCommand("installNode");
+
+    sshClient.closeConnection();
 
     spinner.succeed(ui.colorSuccess("Ec2 instance provisioned successfully"));
 

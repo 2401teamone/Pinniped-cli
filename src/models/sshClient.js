@@ -30,36 +30,6 @@ export default class SSHClient {
     }
   }
 
-  async runCommand(command) {
-    try {
-      this.spinner.text = "Running command...";
-
-      const { stdout, stderr } = await new Promise((resolve, reject) => {
-        this.sshClient.exec(command, (err, stream) => {
-          if (err) return reject(err);
-          let stdout = "";
-          let stderr = "";
-          stream
-            .on("data", (data) => (stdout += data.toString()))
-            .on("error", (err) => reject(err))
-            .on("close", (code) => {
-              if (code !== 0) {
-                reject(new Error(`Command failed with code ${code}`));
-              } else {
-                resolve({ stdout, stderr });
-              }
-            });
-        });
-      });
-
-      this.spinner.text = "Command executed successfully";
-
-      this.closeConnection();
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-
   async sftpConnect() {
     return new Promise((resolve, reject) => {
       this.sshClient.sftp((err, sftp) => {
@@ -71,6 +41,35 @@ export default class SSHClient {
         resolve();
       });
     });
+  }
+
+  async runCommand(commandKey) {
+    await this.connect();
+    const command = SSHClient.commands[commandKey];
+
+    this.spinner.text = `Running ${commandKey} comnmand on the EC2 instance`;
+
+    const { stdout, stderr } = await new Promise((resolve, reject) => {
+      this.sshClient.exec(command, (err, stream) => {
+        if (err) return reject(err);
+        let stdout = "";
+        let stderr = "";
+        stream
+          .on("data", (data) => (stdout += data.toString()))
+          .on("error", (err) => reject(err))
+          .on("close", (code) => {
+            if (code !== 0) {
+              reject(new Error(`Command failed with code ${code}`));
+            } else {
+              resolve({ stdout, stderr });
+            }
+          });
+      });
+    });
+
+    this.spinner.text = "Command executed successfully";
+
+    this.closeConnection();
   }
 
   async syncFiles(localDirPath, remoteDirPath, filterKey) {
@@ -96,7 +95,6 @@ export default class SSHClient {
     }
 
     this.closeSftpConnection();
-    this.closeConnection();
   }
 
   // Recursive function to upload files/directories
@@ -135,47 +133,38 @@ export default class SSHClient {
   }
 
   async createDir(remotePath) {
-    return new Promise((resolve, reject) => {
-      this.sshClient.sftp((err, sftp) => {
-        if (err) {
-          sftp.end();
-          return reject(err);
+    return await new Promise((resolve, reject) => {
+      // Check if the directory already exists
+      this.sftp.readdir(remotePath, (err) => {
+        if (!err) {
+          // Directory already exists, resolve immediately
+          this.spinner.text = `directory ${remotePath
+            .split("/")
+            .pop()} already exists`;
+          return resolve();
         }
 
-        // Check if the directory already exists
-        sftp.readdir(remotePath, (err) => {
-          if (!err) {
-            // Directory already exists, resolve immediately
-            this.spinner.text = `directory ${remotePath
-              .split("/")
-              .pop()} already exists`;
-            sftp.end();
-            return resolve();
+        // If readdir throws an error, it means the directory doesn't exist
+        // Attempt to create the directory
+        this.sftp.mkdir(remotePath, (err) => {
+          if (err) {
+            return reject(err);
           }
-
-          // If readdir throws an error, it means the directory doesn't exist
-          // Attempt to create the directory
-          sftp.mkdir(remotePath, (err) => {
-            if (err) {
-              return reject(err);
-            }
-            this.spinner.text = `created directory ${remotePath
-              .split("/")
-              .pop()}`;
-            sftp.end();
-            resolve();
-          });
+          this.spinner.text = `created directory ${remotePath
+            .split("/")
+            .pop()}`;
+          resolve();
         });
       });
     });
   }
 
-  closeSftpConnection() {
-    this.sftp.end();
-  }
-
   closeConnection() {
     this.sshClient.end();
+  }
+
+  closeSftpConnection() {
+    this.sftp.end();
   }
 
   static syncFilters = {
@@ -199,5 +188,12 @@ export default class SSHClient {
         ].includes(fileName) && !fileName.endsWith(".pem")
       );
     },
+  };
+
+  static commands = {
+    installNode:
+      "DEBIAN_FRONTEND=noninteractive curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs",
+    test: "touch test.txt",
+    installDependencies: "npm install --prefix server",
   };
 }

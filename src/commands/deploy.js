@@ -1,7 +1,6 @@
 // Purpose: Deploy the project to the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
-import uploadFilesToEC2 from "../utils/uploadFilesToEC2.js";
 import { readInstanceData } from "../utils/instanceData.js";
 import SSHClient from "../models/sshClient.js";
 
@@ -37,15 +36,18 @@ const deploy = async (agrv) => {
       privateKeyPath: instanceData[answers.instance].sshKey,
     };
 
-    const sshClient = new SSHClient(connectionParams, spinner);
-    // await uploadFilesToEC2(connectionParams, spinner);
-
     const localDirPath = process.cwd();
     const remoteDirPath = "/home/ubuntu/server";
 
+    const sshClient = new SSHClient(connectionParams, spinner);
+
     await sshClient.syncFiles(localDirPath, remoteDirPath, "deploy");
 
-    spinner.succeed(ui.colorSuccess("Project files copied successfully"));
+    await sshClient.runCommand("installDependencies");
+
+    sshClient.closeConnection();
+
+    spinner.succeed(ui.colorSuccess("Project Deployed Successfully!"));
 
     ui.boxMsg("Run `pinniped start` to start your server on the EC2 instance");
   } catch (err) {
