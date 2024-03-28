@@ -43,10 +43,62 @@ export const instanceTypes = [
   "t2.2xlarge",
 ];
 
+export const updateOptions = [
+  {
+    short: "Full",
+    value: 0,
+    name: "Full\n - Update the server, frontend, dependencies, database, and migrations to match your local project\n",
+  },
+  {
+    short: "Frontend",
+    value: 1,
+    name: "Frontend\n - Update the frontend to match your local project's dist folder\n",
+  },
+  {
+    short: "Server",
+    value: 2,
+    name: "Server\n - Update the all non-database, non frontend files to match your local project, and update dependencies\n",
+  },
+  {
+    short: "Schema",
+    value: 3,
+    name: "Schema\n - Update the database schema to match the migrations in your local pnpd_data/migrations folder\n",
+  },
+  {
+    short: "Database",
+    value: 4,
+    name: "Database\n - Update the pnpd.db file to match your local pnpd.db file\n",
+  },
+];
+
 //LOGGING FUNCTIONS
 export const print = (message) => {
-  console.log(message);
+  console.log(colorStandard(message));
 };
+
+export const commandHeader = (message) => {
+  console.clear();
+  console.log(colorStandard(message));
+  divider(80);
+};
+export const printSuccess = (message) => {
+  console.log(colorSuccess(message));
+};
+export const printError = (message) => {
+  console.log(colorError(message));
+};
+
+export const divider = (length = 80, newLine) => {
+  let div = colorStandard("-".repeat(length));
+  if (newLine) div += "\n";
+  console.log(div);
+};
+
+export const space = (lines = 1) => {
+  console.log("\n".repeat(lines));
+};
+
+//COLOR FUNCTIONS
 
 export const colorStandard = (message) => chalk[STANDARD](message);
 export const colorSuccess = (message) => chalk[SUCCESS](message);
@@ -115,17 +167,24 @@ export const info = () => {
     "Run `npm reset-migrations` to reset the migrations database.",
   ];
 
-  console.log(colorStandard(fullLogo100));
+  print(fullLogo100);
   boxMsg(message.join("\n"));
 };
 
 export default {
+  space,
+  colorStandard,
+  colorSuccess,
+  colorError,
+  commandHeader,
+  divider,
+  colorStandard,
+  updateOptions,
   regions,
   instanceTypes,
-  colorError,
-  colorSuccess,
-  colorStandard,
   print,
+  printSuccess,
+  printError,
   runSpinner,
   boxMsg,
   getStarted,
