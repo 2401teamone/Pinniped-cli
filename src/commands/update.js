@@ -1,4 +1,4 @@
-// Purpose: Deploy the project to the EC2 instance
+// Purpose: Update the project on the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
 import { readInstanceData } from "../utils/instanceData.js";
@@ -52,17 +52,17 @@ const update = async (agrv) => {
       pageSize: 20,
     },
   ]);
-  const type = ui.updateOptions[answers.type].short;
+  const type = ui.updateOptions[answers.type].type;
   ui.commandHeader(COMMAND_HEADER_MSG + ` - Type: ${type}`);
 
-  try {
-    //start a loading spinner
-    const spinner = ui.runSpinner(
-      ui.colorStandard(
-        `Connecting to AWS EC2 instance. This may take a few seconds...`
-      )
-    );
+  //start a loading spinner
+  const spinner = ui.runSpinner(
+    ui.colorStandard(
+      `Connecting to AWS EC2 instance. This may take a few seconds...`
+    )
+  );
 
+  try {
     const connectionParams = {
       hostName: instanceData[answers.instance].ipAddress,
       username: instanceData[answers.instance].userName,
@@ -71,9 +71,42 @@ const update = async (agrv) => {
 
     const sshClient = new SSHClient(connectionParams, spinner);
 
+    console.log(`Type: ${type}`);
+
     await sshClient.connect();
 
     await sshClient.runCommand("stop");
+
+    let localDirPath;
+    let remoteDirPath;
+    switch (type) {
+      case "full":
+        localDirPath = process.cwd();
+        remoteDirPath = "/home/ubuntu/server";
+        await sshClient.syncFiles(localDirPath, remoteDirPath, type);
+        break;
+      case "frontend":
+        localDirPath = process.cwd() + "/dist";
+        remoteDirPath = "/home/ubuntu/server/dist";
+        await sshClient.syncFiles(localDirPath, remoteDirPath, type);
+        break;
+      case "server":
+        localDirPath = process.cwd();
+        remoteDirPath = "/home/ubuntu/server";
+        await sshClient.syncFiles(localDirPath, remoteDirPath, type);
+        await sshClient.runCommand("updateDependencies");
+        break;
+      case "schema":
+        localDirPath = process.cwd() + "/pnpd_data/migrations";
+        remoteDirPath = "/home/ubuntu/server/pnpd_data/migrations";
+        await sshClient.syncFiles(localDirPath, remoteDirPath, type);
+        break;
+      case "database":
+        localDirPath = process.cwd() + "/pnpd_data/pnpd.db";
+        remoteDirPath = "/home/ubuntu/server/pnpd_data/pnpd.db";
+        await sshClient.sendFile(localDirPath, remoteDirPath);
+        break;
+    }
 
     await sshClient.runCommand("start");
 

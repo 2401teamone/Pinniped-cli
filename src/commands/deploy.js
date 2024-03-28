@@ -57,14 +57,14 @@ const deploy = async (agrv) => {
       privateKeyPath: instanceData[answers.instance].sshKey,
     };
 
-    const localDirPath = process.cwd();
-    const remoteDirPath = "/home/ubuntu/server";
-
     const sshClient = new SSHClient(connectionParams, spinner);
 
     await sshClient.connect();
 
-    await sshClient.syncFiles(localDirPath, remoteDirPath, "deploy");
+    const localDirPath = process.cwd();
+    const remoteDirPath = "/home/ubuntu/server";
+
+    await sshClient.syncFiles(localDirPath, remoteDirPath, "full");
 
     await sshClient.runCommand("installDependencies");
 

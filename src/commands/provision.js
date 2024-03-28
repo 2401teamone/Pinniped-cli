@@ -72,8 +72,10 @@ const provision = async (agrv) => {
     const sshClient = new SSHClient(connectionParams, spinner);
 
     await sshClient.runCommand("installNode");
-
     await sshClient.runCommand("installPM2");
+    await sshClient.runCommand("update");
+    await sshClient.runCommand("installLibcap2Bin");
+    await sshClient.runCommand("setcap");
 
     sshClient.closeConnection();
 

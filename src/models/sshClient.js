@@ -78,9 +78,7 @@ export default class SSHClient {
 
     const filterFunc = SSHClient.syncFilters[filterKey];
 
-    const items = readdirSync(localDirPath).filter(
-      SSHClient.syncFilters[filterKey]
-    );
+    const items = readdirSync(localDirPath).filter(filterFunc);
 
     await this.createDir(remoteDirPath);
     this.spinner.text = `created directory ${remoteDirPath.split("/").pop()}`;
@@ -171,16 +169,24 @@ export default class SSHClient {
 
   static syncFilters = {
     // Sync all project files, except node_modules, package-lock.json, and instanceData.json
-    deploy(fileName) {
+    full(fileName) {
       return (
         !["node_modules", "package-lock.json", "instanceData.json"].includes(
           fileName
         ) && !fileName.endsWith(".pem")
       );
     },
+    // Don't exclude any files in the dist directory
+    frontend(fileName) {
+      return true;
+    },
+    // Don't exclude any files in the migrations directory
+    schema(fileName) {
+      return true;
+    },
 
     // Sync all files that deploy does, but also exclude pnpd_data directory and files inside it
-    updateApp(fileName) {
+    server(fileName) {
       return (
         ![
           "node_modules",
@@ -195,11 +201,13 @@ export default class SSHClient {
   static commands = {
     installNode:
       "DEBIAN_FRONTEND=noninteractive curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs",
-    test: "touch test.txt",
-    installDependencies: "cd server/ && npm install",
     installPM2: "sudo npm install pm2 -g",
-    start: "cd server/ && sudo pm2 start index.js",
-    stop: "sudo pm2 stop 0",
-    status: "sudo pm2 list",
+    update: "sudo apt-get update",
+    installLibcap2Bin: "sudo apt-get install libcap2-bin",
+    setcap: "sudo setcap 'cap_net_bind_service=+ep' /usr/bin/node",
+    installDependencies: "cd server/ && npm install",
+    updateDependencies: "cd server/ && npm update",
+    start: "cd server/ && pm2 start index.js",
+    stop: "pm2 stop 0",
   };
 }
