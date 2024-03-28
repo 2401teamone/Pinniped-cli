@@ -3,8 +3,27 @@ import inquirer from "inquirer";
 import ui from "../utils/ui.js";
 import { readInstanceData } from "../utils/instanceData.js";
 import SSHClient from "../models/sshClient.js";
+const COMMAND_HEADER_MSG = "Pinniped Stop";
 
 const stop = async (agrv) => {
+  ui.commandHeader(COMMAND_HEADER_MSG);
+
+  let answers = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "proceed",
+      message:
+        "This command will stop your deployed application using pm2 process manager.\n\n" +
+        "  Would you like to proceed?",
+    },
+  ]);
+
+  if (!answers.proceed) {
+    console.log(
+      "\n  Stop command cancelled. \n  Please run `pinniped info` help using this cli.\n"
+    );
+    return;
+  }
   const instanceData = await readInstanceData();
 
   const instanceChoices = instanceData.map((instance, idx) => ({
@@ -13,7 +32,7 @@ const stop = async (agrv) => {
     value: idx,
   }));
 
-  const answers = await inquirer.prompt([
+  answers = await inquirer.prompt([
     {
       type: "list",
       name: "instance",
@@ -46,9 +65,9 @@ const stop = async (agrv) => {
 
     spinner.succeed(ui.colorSuccess("Project Stopped Successfully!"));
 
-    ui.boxMsg(
-      "Run `pinniped start` to start your server again on the EC2 instance"
-    );
+    ui.space();
+    ui.print("Run `pinniped start` to restart your application when ready.");
+    ui.space();
   } catch (err) {
     console.log(err);
   }

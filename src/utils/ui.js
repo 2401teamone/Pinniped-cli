@@ -118,20 +118,17 @@ export const boxMsg = (message) => {
 //UI FUNCTIONS
 export const getStarted = (answers) => {
   const steps = [
-    `Welcome to your new project: ${answers.projectName}`,
+    `Welcome to your new pinniped project: ${answers.projectName}`,
     "-------------------------------------------",
     "To get started, run the following commands:",
     "-------------------------------------------",
     `1. cd ${answers.projectName}`,
     "2. npm install",
-    "3. npm start",
-    "-------------------------------------------",
-    "For extension and deployment options, run:",
-    "-------------------------------------------",
-    "pinniped --help",
+    "3. npm start\n",
+    "Please run `pinniped info` deployment options and other commands.",
   ];
 
-  boxMsg(steps.join("\n"));
+  print(steps.join("\n"));
 };
 
 const welcome = (answers) => {

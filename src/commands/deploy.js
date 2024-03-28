@@ -3,8 +3,29 @@ import inquirer from "inquirer";
 import ui from "../utils/ui.js";
 import { readInstanceData } from "../utils/instanceData.js";
 import SSHClient from "../models/sshClient.js";
+const COMMAND_HEADER_MSG = "Pinniped Deploy";
 
 const deploy = async (agrv) => {
+  ui.commandHeader(COMMAND_HEADER_MSG);
+
+  let answers = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "proceed",
+      message:
+        "This command will send the project files from your current working\n" +
+        "  directory to your provisioned EC2 instance and install dependecies.\n\n" +
+        "  Would you like to proceed?",
+    },
+  ]);
+
+  if (!answers.proceed) {
+    console.log(
+      "\n  Deploy command cancelled. \n  Please run `pinniped info` help using this cli.\n"
+    );
+    return;
+  }
+
   const instanceData = await readInstanceData();
 
   const instanceChoices = instanceData.map((instance, idx) => ({
@@ -13,7 +34,7 @@ const deploy = async (agrv) => {
     value: idx,
   }));
 
-  const answers = await inquirer.prompt([
+  answers = await inquirer.prompt([
     {
       type: "list",
       name: "instance",
@@ -51,7 +72,9 @@ const deploy = async (agrv) => {
 
     spinner.succeed(ui.colorSuccess("Project Deployed Successfully!"));
 
-    ui.boxMsg("Run `pinniped start` to start your server on the EC2 instance");
+    ui.space();
+    ui.print("Run `pinniped start` to start your server on the EC2 instance");
+    ui.space();
   } catch (err) {
     console.log(err);
   }

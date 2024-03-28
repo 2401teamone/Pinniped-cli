@@ -66,6 +66,8 @@ export default class SSHClient {
       });
     });
 
+    this.spinner.text = stdout;
+
     this.spinner.text = "Command executed successfully";
   }
 
@@ -198,5 +200,6 @@ export default class SSHClient {
     installPM2: "sudo npm install pm2 -g",
     start: "cd server/ && sudo pm2 start index.js",
     stop: "sudo pm2 stop 0",
+    status: "sudo pm2 list",
   };
 }

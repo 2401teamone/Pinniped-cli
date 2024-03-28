@@ -21,7 +21,7 @@ const update = async (agrv) => {
       type: "confirm",
       name: "proceed",
       message:
-        "This process will: \n" +
+        "This command will: \n" +
         "  1. Stop your app running on your EC2 instance if it is running. \n" +
         "  2. Update files on your EC2 instance to match your local project directory. \n" +
         "  3. Re-start your app.  \n\n" +
@@ -31,7 +31,7 @@ const update = async (agrv) => {
 
   if (!answers.proceed) {
     console.log(
-      "\n  Update process cancelled. \n  Please run `pinniped info` help using this cli.\n"
+      "\n  Update command cancelled. \n  Please run `pinniped info` help using this cli.\n"
     );
     return;
   }
