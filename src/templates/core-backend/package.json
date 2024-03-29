@@ -11,6 +11,7 @@
     "reset-migrations": "rm -r pnpd_data/migrations && sqlite3 pnpd_data/pnpd.db \"DROP TABLE knex_migrations; DROP TABLE knex_migrations_lock;\""
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "pinniped": "latest"
   },
   "devDependencies": {
