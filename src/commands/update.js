@@ -52,6 +52,24 @@ const update = async (agrv) => {
       pageSize: 20,
     },
   ]);
+
+  const finalCheck = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "proceed",
+      message: `Warning! This action will overwrite files on your EC2 instance at ${
+        instanceData[answers.instance].ipAddress
+      } with your local files. \n\n  Proceed?`,
+    },
+  ]);
+
+  if (!finalCheck.proceed) {
+    console.log(
+      "\n  Update command cancelled. \n  Please run `pinniped info` help using this cli.\n"
+    );
+    return;
+  }
+
   const type = ui.updateOptions[answers.type].type;
   ui.commandHeader(COMMAND_HEADER_MSG + ` - Type: ${type}`);
 
