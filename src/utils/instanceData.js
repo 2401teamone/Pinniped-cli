@@ -25,8 +25,8 @@ export async function storeEC2MetaData(EC2MetaData) {
     instanceType: EC2MetaData.instanceType,
     amiId: EC2MetaData.amiId,
     provisionedAt: new Date().toISOString(),
-    sshKey: EC2MetaData.privateKeyPath,
-    userName: EC2MetaData.username,
+    privateKeyPath: EC2MetaData.privateKeyPath,
+    username: EC2MetaData.username,
     sshCommand: `ssh -i ${EC2MetaData.privateKeyPath} ${EC2MetaData.username}@${EC2MetaData.publicIpAddress}`,
   });
 

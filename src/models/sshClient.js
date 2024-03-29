@@ -17,8 +17,8 @@ export default class SSHClient {
         this.sshClient.on("ready", resolve);
         this.sshClient.connect({
           host: this.EC2MetaData.publicIpAddress,
-          username: this.EC2MetaData.userName,
-          privateKey: readFileSync(this.EC2MetaData.sshKey),
+          username: this.EC2MetaData.username,
+          privateKey: readFileSync(this.EC2MetaData.privateKeyPath),
           port: 22,
         });
       });
