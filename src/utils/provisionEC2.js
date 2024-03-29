@@ -4,13 +4,12 @@ import {
   AuthorizeSecurityGroupIngressCommand,
   CreateKeyPairCommand,
   DescribeSecurityGroupsCommand,
+  DescribeImagesCommand,
   DescribeInstancesCommand,
   RunInstancesCommand,
 } from "@aws-sdk/client-ec2";
 import { writeFile } from "fs/promises";
 
-const AMI_ID = "ami-0b8b44ec9a8f90422";
-const ARM_AMI_ID = "ami-0000456e99b2b6a9d";
 const USERNAME = "ubuntu";
 const SECURITY_GROUP = "Pinniped-Security";
 
@@ -27,9 +26,12 @@ export default async function provisionEC2(answers, spinner) {
   // Create EC2 key pair for SSH access
   await createKeyPair(ec2Client, answers.projectName, spinner);
 
+  // Find the latest Ubuntu ARM64 AMI ID for the selected region
+  const ubuntuArm64AmiId = await findUbuntuArm64AmiId(answers.region);
+
   // Specify parameters for launching the EC2 instance
   const instanceParams = {
-    ImageId: ARM_AMI_ID,
+    ImageId: ubuntuArm64AmiId, // Ubuntu ARM64 AMI ID
     InstanceType: answers.instanceType, // Instance type
     KeyName: answers.projectName, // Key pair name
     MinCount: 1,
@@ -44,7 +46,66 @@ export default async function provisionEC2(answers, spinner) {
     hostName,
     username: USERNAME,
     privateKeyPath: `${answers.projectName}.pem`,
+    region: answers.region,
+    instanceType: answers.instanceType,
+    amiId: ubuntuArm64AmiId,
   };
+}
+
+export async function findUbuntuArm64AmiId(region) {
+  const ec2Client = new EC2Client({ region });
+
+  const describeImagesParams = {
+    // Filters: [
+    //   {
+    //     Name: "architecture",
+    //     Values: ["arm64"],
+    //   },
+    //   {
+    //     Name: "name",
+    //     Values: ["*ubuntu/images/*ubuntu-focal-20.04-arm64-server-*"],
+    //   },
+    //   {
+    //     Name: "state",
+    //     Values: ["available"],
+    //   },
+    // ],
+    // Owners: ["099720109477"], // Canonical's owner ID
+    Filters: [
+      {
+        Name: "architecture",
+        Values: ["x86_64"],
+      },
+      {
+        Name: "name",
+        Values: ["*ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"], // Updated for Ubuntu 22.04
+      },
+      {
+        Name: "state",
+        Values: ["available"],
+      },
+    ],
+    Owners: ["099720109477"], // Canonical's owner ID remains the same
+  };
+
+  try {
+    const command = new DescribeImagesCommand(describeImagesParams);
+    const response = await ec2Client.send(command);
+
+    // Sort images by creation date in descending order
+    const sortedImages = response.Images.sort((a, b) =>
+      b.CreationDate.localeCompare(a.CreationDate)
+    );
+
+    if (sortedImages.length > 0) {
+      return sortedImages[0].ImageId; // Return the most recent AMI ID
+    } else {
+      throw new Error("No suitable AMI found.");
+    }
+  } catch (error) {
+    console.error("Error finding Ubuntu ARM64 AMI:", error);
+    throw error;
+  }
 }
 
 export async function getSecurityGroupId(ec2Client) {

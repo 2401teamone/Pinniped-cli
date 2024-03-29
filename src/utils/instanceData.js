@@ -20,6 +20,9 @@ export async function storeInstanceData(connectionParams) {
   const instanceData = await readInstanceData();
   instanceData.unshift({
     ipAddress: hostName,
+    region: connectionParams.region,
+    instanceType: connectionParams.instanceType,
+    amiId: connectionParams.amiId,
     provisionedAt: new Date().toISOString(),
     sshKey: privateKeyPath,
     userName: username,

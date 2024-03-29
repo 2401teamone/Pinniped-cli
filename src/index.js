@@ -8,6 +8,7 @@ import deploy from "./commands/deploy.js";
 import start from "./commands/start.js";
 import stop from "./commands/stop.js";
 import update from "./commands/update.js";
+import test from "./commands/test.js";
 
 // Define the CLI command with flags and options
 yargs(process.argv.slice(2))
@@ -23,6 +24,7 @@ yargs(process.argv.slice(2))
   .command("start", "Start your app on an AWS EC2 Instance", () => {}, start)
   .command("stop", "Stop your app on an AWS EC2 Instance", () => {}, stop)
   .command("update", "Update app on an AWS EC2 Instance", () => {}, update)
+  .command("test", "test app on an AWS EC2 Instance", () => {}, test)
   .strict()
   .demandCommand(
     1,
