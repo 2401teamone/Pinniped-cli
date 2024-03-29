@@ -16,7 +16,7 @@ const provision = async (agrv) => {
       name: "proceed",
       message:
         "This command will: \n" +
-        "  1. Provision a new AWS EC2 instnce. \n" +
+        "  1. Provision a new AWS EC2 instance. \n" +
         "  2. Create a `Pinniped-Security` security group in your chosen region. \n" +
         "  3. Create a EC2 Key Pair for use in connecting to your EC2 instance.\n\n" +
         "  You must have the aws cli installed and authenticated to perform this command.\n\n" +

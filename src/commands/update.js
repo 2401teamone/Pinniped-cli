@@ -102,13 +102,14 @@ const update = async (agrv) => {
         await sshClient.syncFiles(localDirPath, remoteDirPath, type);
         break;
       case "database":
+        // also update migrations.
         localDirPath = process.cwd() + "/pnpd_data/pnpd.db";
         remoteDirPath = "/home/ubuntu/server/pnpd_data/pnpd.db";
         await sshClient.sendFile(localDirPath, remoteDirPath);
         break;
     }
 
-    await sshClient.runCommand("start");
+    await sshClient.runCommand("restart");
 
     sshClient.closeConnection();
 

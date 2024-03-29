@@ -80,7 +80,15 @@ export default class SSHClient {
 
     const items = readdirSync(localDirPath).filter(filterFunc);
 
-    await this.createDir(remoteDirPath);
+    // If doing a full sync, delete the remote directory and create a new one
+    if (filterKey === "full") {
+      console.log("full Sync");
+      await this.createDir(remoteDirPath); // update this
+    } else {
+      console.log("not full Sync");
+      await this.createDir(remoteDirPath);
+    }
+
     this.spinner.text = `created directory ${remoteDirPath.split("/").pop()}`;
 
     this.spinner.text = "Copying project files to EC2 instance";
@@ -159,6 +167,42 @@ export default class SSHClient {
     });
   }
 
+  async replaceDir(remotePath) {
+    return await new Promise((resolve, reject) => {
+      // Check if the directory already exists
+      this.sftp.readdir(remotePath, (err) => {
+        if (!err) {
+          // Directory already exists, resolve immediately
+          this.spinner.text = `directory ${remotePath
+            .split("/")
+            .pop()} already exists`;
+
+          this.sftp.exec(remotePath, { recursive: true }, (err) => {
+            if (err) {
+              return reject(err);
+            }
+            this.spinner.text = `deleted directory ${remotePath
+              .split("/")
+              .pop()}`;
+            resolve();
+          });
+        }
+
+        // If readdir throws an error, it means the directory doesn't exist
+        // Attempt to create the directory
+        this.sftp.mkdir(remotePath, (err) => {
+          if (err) {
+            return reject(err);
+          }
+          this.spinner.text = `created directory ${remotePath
+            .split("/")
+            .pop()}`;
+          resolve();
+        });
+      });
+    });
+  }
+
   closeConnection() {
     this.sshClient.end();
   }
@@ -208,6 +252,7 @@ export default class SSHClient {
     installDependencies: "cd server/ && npm install",
     updateDependencies: "cd server/ && npm update",
     start: "cd server/ && pm2 start index.js",
+    restart: "pm2 restart 0",
     stop: "pm2 stop 0",
   };
 }
