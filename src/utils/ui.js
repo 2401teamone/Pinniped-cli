@@ -11,10 +11,93 @@ const SUCCESS = "greenBright";
 const ERROR = "redBright";
 const BOX_COLOR = "blue";
 
+//DEPLOYMENT OPTIONS
+export const regions = [
+  "us-east-1",
+  "us-east-2",
+  "us-west-1",
+  "us-west-2",
+  "af-south-1",
+  "ap-east-1",
+  "ap-south-1",
+  "ap-northeast-2",
+  "ap-southeast-1",
+  "ap-southeast-2",
+  "ap-northeast-1",
+  "ca-central-1",
+  "eu-central-1",
+  "eu-west-1",
+  "eu-west-2",
+  "eu-west-3",
+  "eu-north-1",
+  "me-south-1",
+  "sa-east-1",
+];
+
+export const instanceTypes = [
+  "t2.micro",
+  "t2.medium",
+  "t2.large",
+  "t2.xlarge",
+  "t2.2xlarge",
+];
+
+export const updateOptions = [
+  {
+    type: "full",
+    value: 0,
+    name: "Full\n - Update the server, frontend, dependencies, database, and migrations to match your local project\n",
+  },
+  {
+    type: "frontend",
+    value: 1,
+    name: "Frontend\n - Update the frontend to match your local project's dist folder\n",
+  },
+  {
+    type: "server",
+    value: 2,
+    name: "Server\n - Update the all non-database, non frontend files to match your local project, and update dependencies\n",
+  },
+  {
+    type: "schema",
+    value: 3,
+    name: "Schema\n - Update the database schema to match the migrations in your local pnpd_data/migrations folder\n",
+  },
+  {
+    type: "database",
+    value: 4,
+    name: "Database\n - Update the pnpd.db file to match your local pnpd.db file\n",
+  },
+];
+
 //LOGGING FUNCTIONS
 export const print = (message) => {
-  console.log(message);
+  console.log(colorStandard(message));
 };
+
+export const commandHeader = (message) => {
+  console.clear();
+  console.log(colorStandard(message));
+  divider(80);
+};
+export const printSuccess = (message) => {
+  console.log(colorSuccess(message));
+};
+export const printError = (message) => {
+  console.log(colorError(message));
+};
+
+export const divider = (length = 80, newLine) => {
+  let div = colorStandard("-".repeat(length));
+  if (newLine) div += "\n";
+  console.log(div);
+};
+
+export const space = (lines = 1) => {
+  console.log("\n".repeat(lines));
+};
+
+//COLOR FUNCTIONS
 
 export const colorStandard = (message) => chalk[STANDARD](message);
 export const colorSuccess = (message) => chalk[SUCCESS](message);
@@ -34,20 +117,17 @@ export const boxMsg = (message) => {
 //UI FUNCTIONS
 export const getStarted = (answers) => {
   const steps = [
-    `Welcome to your new project: ${answers.projectName}`,
+    `Welcome to your new pinniped project: ${answers.projectName}`,
     "-------------------------------------------",
     "To get started, run the following commands:",
     "-------------------------------------------",
     `1. cd ${answers.projectName}`,
     "2. npm install",
-    "3. npm start",
-    "-------------------------------------------",
-    "For extension and deployment options, run:",
-    "-------------------------------------------",
-    "pinniped --help",
+    "3. npm start\n",
+    "Please run `pinniped info` deployment options and other commands.",
   ];
 
-  boxMsg(steps.join("\n"));
+  print(steps.join("\n"));
 };
 
 const welcome = (answers) => {
@@ -83,15 +163,24 @@ export const info = () => {
     "Run `npm reset-migrations` to reset the migrations database.",
   ];
 
-  console.log(colorStandard(fullLogo100));
+  print(fullLogo100);
   boxMsg(message.join("\n"));
 };
 
 export default {
-  colorError,
-  colorSuccess,
+  space,
   colorStandard,
+  colorSuccess,
+  colorError,
+  commandHeader,
+  divider,
+  colorStandard,
+  updateOptions,
+  regions,
+  instanceTypes,
   print,
+  printSuccess,
+  printError,
   runSpinner,
   boxMsg,
   getStarted,

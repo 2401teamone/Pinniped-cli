@@ -1,21 +1,16 @@
 {
   "version": "1.0.0",
   "author": "",
-  "main": "./dist/Pinniped.js",
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "prod": "node ./dist/Pinniped.js",
     "dev": "nodemon index.js",
     "reset-all": "npm run reset-sessions && npm run reset-migrations && npm run reset-db",
     "reset-db": "rm -f pnpd_data/pnpd.db && touch pnpd_data/pnpd.db && rm -f pnpd_data/pnpd.db-wal && rm -f pnpd_data/pnpd.db-shm",
     "reset-sessions": "rm -f pnpd_data/session.db && touch pnpd_data/session.db",
-    "reset-migrations": "rm -r pnpd_data/migrations && sqlite3 pnpd_data/pnpd.db \"DROP TABLE knex_migrations; DROP TABLE knex_migrations_lock;\"",
-    "build": "npx parcel build index.js && npm run build-cleanup",
-    "build-cleanup": "rm -rf .parcel-cache"
+    "reset-migrations": "rm -r pnpd_data/migrations && sqlite3 pnpd_data/pnpd.db \"DROP TABLE knex_migrations; DROP TABLE knex_migrations_lock;\""
   },
   "dependencies": {
-    "parcel": "^2.12.0",
     "dotenv": "^16.4.5",
     "pinniped": "latest"
   },

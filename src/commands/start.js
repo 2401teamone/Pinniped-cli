@@ -3,9 +3,9 @@ import inquirer from "inquirer";
 import ui from "../utils/ui.js";
 import { readEC2MetaData } from "../utils/instanceData.js";
 import SSHClient from "../models/sshClient.js";
-const COMMAND_HEADER_MSG = "Pinniped Deploy";
+const COMMAND_HEADER_MSG = "Pinniped Start";
 
-const deploy = async (agrv) => {
+const start = async (agrv) => {
   ui.commandHeader(COMMAND_HEADER_MSG);
 
   let answers = await inquirer.prompt([
@@ -13,19 +13,19 @@ const deploy = async (agrv) => {
       type: "confirm",
       name: "proceed",
       message:
-        "This command will send the project files from your current working\n" +
-        "  directory to your provisioned EC2 instance and install dependecies.\n\n" +
+        "This command will start your deployed application using pm2 process manager\n" +
+        "  on your provisioned EC2 instance, and will allow you to enter a domain\n" +
+        "  for setting up HTTPS access to your application.\n\n" +
         "  Would you like to proceed?",
     },
   ]);
 
   if (!answers.proceed) {
     console.log(
-      "\n  Deploy command cancelled. \n  Please run `pinniped info` help using this cli.\n"
+      "\n  Start command cancelled. \n  Please run `pinniped info` help using this cli.\n"
     );
     return;
   }
-
   const EC2MetaData = await readEC2MetaData();
 
   const instanceChoices = EC2MetaData.map((instance, idx) => ({
@@ -40,7 +40,7 @@ const deploy = async (agrv) => {
     {
       type: "list",
       name: "instance",
-      message: "Select the IP adress of the EC2 instance for deployment:",
+      message: "Select the IP address of the EC2 instance to start:",
       choices: instanceChoices,
     },
   ]);
@@ -57,23 +57,18 @@ const deploy = async (agrv) => {
 
     await sshClient.connect();
 
-    const localDirPath = process.cwd();
-    const remoteDirPath = "/home/ubuntu/server";
-
-    await sshClient.syncFiles(localDirPath, remoteDirPath, "full");
-
-    await sshClient.runCommand("installDependencies");
+    await sshClient.runCommand("start");
 
     sshClient.closeConnection();
 
-    spinner.succeed(ui.colorSuccess("Project Deployed Successfully!"));
+    spinner.succeed(ui.colorSuccess("Project Started Successfully!"));
 
     ui.space();
-    ui.print("Run `pinniped start` to start your server on the EC2 instance");
+    ui.print("Run `pinniped stop` to stop your server on the EC2 instance");
     ui.space();
   } catch (err) {
     console.log(err);
   }
 };
 
-export default deploy;
+export default start;

@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "pinniped-cli",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "CLI tool for Creating, Managing, and Deploying your Pinniped projects",
   "main": "./src/index.js",
   "scripts": {
@@ -32,11 +32,14 @@
     "pinniped": "./bin/index.js"
   },
   "dependencies": {
+    "@aws-sdk/client-ec2": "^3.541.0",
+    "aws-sdk": "^2.1584.0",
     "boxen": "^7.1.1",
     "chalk": "^5.3.0",
     "fs-extra": "^11.2.0",
     "inquirer": "^9.2.15",
     "ora": "^8.0.1",
+    "ssh2": "^1.15.0",
     "yargs": "^17.7.2"
   },
   "engines": {
