@@ -4,28 +4,33 @@ import path from "path";
 const BASE_DIR = "/home/ubuntu/server";
 
 export default class SSHClient {
-  constructor(connectionParams, spinner) {
-    this.connectionParams = connectionParams;
+  constructor(EC2MetaData, spinner) {
+    this.EC2MetaData = EC2MetaData;
     this.spinner = spinner;
     this.sshClient = new Client();
   }
 
-  async connect() {
-    const { hostName, username, privateKeyPath } = this.connectionParams;
-
+  async connect(retryLimit = 0, attemptNum = 1) {
     try {
       await new Promise((resolve, reject) => {
         this.sshClient.on("error", reject);
         this.sshClient.on("ready", resolve);
         this.sshClient.connect({
-          host: hostName,
-          username: username,
-          privateKey: readFileSync(privateKeyPath),
+          host: this.EC2MetaData.publicIpAddress,
+          username: this.EC2MetaData.userName,
+          privateKey: readFileSync(this.EC2MetaData.sshKey),
           port: 22,
         });
       });
     } catch (error) {
-      console.error("Error:", error);
+      if (attemptNum < retryLimit) {
+        this.spinner.text = `Connection failed. Retrying in 5 seconds... Attempt ${attemptNum}`;
+        // Delay for 15 seconds to allow the EC2 instance to be fully provisioned
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await this.connect(retryLimit, attemptNum + 1);
+      } else {
+        throw new Error(`Failed to connect to EC2 instance: ${error.message}`);
+      }
     }
   }
 
@@ -43,7 +48,6 @@ export default class SSHClient {
   }
 
   async runCommand(commandKey) {
-    await this.connect();
     const command = SSHClient.commands[commandKey];
 
     this.spinner.text = `Running ${commandKey} command on the EC2 instance`;
@@ -73,7 +77,6 @@ export default class SSHClient {
 
   async syncFiles(localDirPath, remoteDirPath, filterKey) {
     // create the destination directory on the EC2 instance if it doesn't exist
-    await this.connect();
     await this.sftpConnect();
 
     const filterFunc = SSHClient.syncFilters[filterKey];
@@ -82,10 +85,8 @@ export default class SSHClient {
 
     // If doing a full sync, delete the remote directory and create a new one
     if (filterKey === "full") {
-      console.log("full Sync");
       await this.createDir(remoteDirPath); // update this
     } else {
-      console.log("not full Sync");
       await this.createDir(remoteDirPath);
     }
 

@@ -1,8 +1,9 @@
+import { EC2 } from "@aws-sdk/client-ec2";
 import fs from "fs/promises";
 
 const INSTANCE_DATA_FILE = "instanceData.json";
 
-export async function readInstanceData() {
+export async function readEC2MetaData() {
   try {
     const data = await fs.readFile(INSTANCE_DATA_FILE);
     return JSON.parse(data);
@@ -15,18 +16,19 @@ export async function readInstanceData() {
   }
 }
 
-export async function storeInstanceData(connectionParams) {
-  const { hostName, username, privateKeyPath } = connectionParams;
-  const instanceData = await readInstanceData();
+export async function storeEC2MetaData(EC2MetaData) {
+  const instanceData = await readEC2MetaData();
+
   instanceData.unshift({
-    ipAddress: hostName,
-    region: connectionParams.region,
-    instanceType: connectionParams.instanceType,
-    amiId: connectionParams.amiId,
+    publicIpAddress: EC2MetaData.publicIpAddress,
+    region: EC2MetaData.region,
+    instanceType: EC2MetaData.instanceType,
+    amiId: EC2MetaData.amiId,
     provisionedAt: new Date().toISOString(),
-    sshKey: privateKeyPath,
-    userName: username,
-    sshCommand: `ssh -i ${privateKeyPath} ${username}@${hostName}`,
+    sshKey: EC2MetaData.privateKeyPath,
+    userName: EC2MetaData.username,
+    sshCommand: `ssh -i ${EC2MetaData.privateKeyPath} ${EC2MetaData.username}@${EC2MetaData.publicIpAddress}`,
   });
+
   await fs.writeFile(INSTANCE_DATA_FILE, JSON.stringify(instanceData, null, 2));
 }

@@ -1,16 +1,18 @@
 // Purpose: Update the project on the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
-import { readInstanceData } from "../utils/instanceData.js";
+import { readEC2MetaData } from "../utils/instanceData.js";
 import SSHClient from "../models/sshClient.js";
 const COMMAND_HEADER_MSG = "Pinniped Update";
 
 const update = async (agrv) => {
-  const instanceData = await readInstanceData();
+  const EC2MetaData = await readEC2MetaData();
 
-  const instanceChoices = instanceData.map((instance, idx) => ({
+  const instanceChoices = EC2MetaData.map((instance, idx) => ({
     name:
-      idx === 0 ? `${instance.ipAddress} (Most Recent)` : instance.ipAddress,
+      idx === 0
+        ? `${instance.publicIpAddress} (Most Recent)`
+        : instance.publicIpAddress,
     value: idx,
   }));
 
@@ -58,7 +60,7 @@ const update = async (agrv) => {
       type: "confirm",
       name: "proceed",
       message: `Warning! This action will overwrite files on your EC2 instance at ${
-        instanceData[answers.instance].ipAddress
+        EC2MetaData[answers.instance].publicIpAddress
       } with your local files. \n\n  Proceed?`,
     },
   ]);
@@ -81,13 +83,7 @@ const update = async (agrv) => {
   );
 
   try {
-    const connectionParams = {
-      hostName: instanceData[answers.instance].ipAddress,
-      username: instanceData[answers.instance].userName,
-      privateKeyPath: instanceData[answers.instance].sshKey,
-    };
-
-    const sshClient = new SSHClient(connectionParams, spinner);
+    const sshClient = new SSHClient(EC2MetaData[answers.instance], spinner);
 
     console.log(`Type: ${type}`);
 
