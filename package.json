@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "pinniped-cli",
-  "version": "0.3.0",
+  "version": "0.4.1",
   "description": "CLI tool for Creating, Managing, and Deploying your Pinniped projects",
   "main": "./src/index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     },
     {
       "name": "Trevor Rees-Jones",
-      "eail": "treesjones3@gmail.com"
+      "email": "treesjones3@gmail.com"
     }
   ],
   "keywords": [],
