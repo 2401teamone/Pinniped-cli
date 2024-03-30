@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "pinniped-cli",
-  "version": "0.4.1",
+  "version": "0.4.5",
   "description": "CLI tool for Creating, Managing, and Deploying your Pinniped projects",
   "main": "./src/index.js",
   "scripts": {
