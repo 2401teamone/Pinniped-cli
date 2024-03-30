@@ -6,13 +6,13 @@ An easy to use CLI tool for creating, managing, and deploying your Pinniped proj
 
 - run `npm install pinniped-cli -g` to install Pinniped-cli globally
 - navigate to a directory where you'd like to create a new Pinniped project
-- run `pinniped create` and follow the promps.
+- run `pinniped create` and follow the prompts.
 
 ## Commands
 
 - pinniped info
 
-  - Displays info about the pinniped and scripts and commands available for use.
+  - Displays info about the pinniped scripts and commands available for use.
 
 - pinniped create
 
@@ -21,5 +21,5 @@ An easy to use CLI tool for creating, managing, and deploying your Pinniped proj
 
 - pinniped deploy
 
-  - Takes you through a guided prompts to configure and deploy your Pinniped project
+  - Takes you through guided prompts to configure and deploy your Pinniped project
     on AWS.

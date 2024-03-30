@@ -1,9 +1,11 @@
 import { pnpd } from "pinniped";
+import "dotenv/config";
 
 let serverConfig = {
-  port: 3000,
-  // domain:
-  // cors:
+  port: process.env.SERVER_PORT,
+  domain: process.env.SERVER_DOMAIN,
+  altNames: process.env.SERVER_ALTNAMES,
+  directory: process.env.SERVER_DIRECTORY,
 };
 
 const app = pnpd(serverConfig);
