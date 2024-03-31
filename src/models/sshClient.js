@@ -6,7 +6,7 @@ import path from "path";
 export default class SSHClient {
   static syncFilters = {
     // Sync all project files, except node_modules, package-lock.json, and instanceData.json
-    full(fileName) {
+    all(fileName) {
       return (
         !["node_modules", "package-lock.json", "instanceData.json"].includes(
           fileName
