@@ -44,9 +44,9 @@ export const instanceTypes = [
 
 export const updateOptions = [
   {
-    type: "full",
+    type: "all",
     value: 0,
-    name: "Full\n - Update the server, frontend, dependencies, database, and migrations to match your local project\n",
+    name: "All\n - Update the backend, frontend, dependencies, database, and migrations to match your local project\n",
   },
   {
     type: "frontend",
@@ -54,9 +54,9 @@ export const updateOptions = [
     name: "Frontend\n - Update the frontend to match your local project's dist folder\n",
   },
   {
-    type: "server",
+    type: "backend",
     value: 2,
-    name: "Server\n - Update the all non-database, non frontend files to match your local project, and update dependencies\n",
+    name: "Backend\n - Update the all non-database, non frontend files to match your local project, and update dependencies\n",
   },
   {
     type: "schema",
@@ -66,7 +66,7 @@ export const updateOptions = [
   {
     type: "database",
     value: 4,
-    name: "Database\n - Update the pnpd.db file to match your local pnpd.db file\n",
+    name: "Database\n - Update the pnpd.db file to match your local pnpd.db file, and update schema migrations\n",
   },
 ];
 

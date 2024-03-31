@@ -85,26 +85,25 @@ const update = async (agrv) => {
   try {
     const sshClient = new SSHClient(EC2MetaData[answers.instance], spinner);
 
-    console.log(`Type: ${type}`);
-
     await sshClient.connect();
-
     await sshClient.runCommand("stop");
 
     let localDirPath;
     let remoteDirPath;
+
     switch (type) {
       case "full":
         localDirPath = process.cwd();
         remoteDirPath = "/home/ubuntu/server";
         await sshClient.syncFiles(localDirPath, remoteDirPath, type);
+        await sshClient.runCommand("updateDependencies");
         break;
       case "frontend":
         localDirPath = process.cwd() + "/dist";
         remoteDirPath = "/home/ubuntu/server/dist";
         await sshClient.syncFiles(localDirPath, remoteDirPath, type);
         break;
-      case "server":
+      case "backend":
         localDirPath = process.cwd();
         remoteDirPath = "/home/ubuntu/server";
         await sshClient.syncFiles(localDirPath, remoteDirPath, type);
@@ -116,21 +115,26 @@ const update = async (agrv) => {
         await sshClient.syncFiles(localDirPath, remoteDirPath, type);
         break;
       case "database":
-        // also update migrations.
+        // Replace the pnpd.db file on the EC2 instance with the local pnpd.db file
         localDirPath = process.cwd() + "/pnpd_data/pnpd.db";
         remoteDirPath = "/home/ubuntu/server/pnpd_data/pnpd.db";
         await sshClient.sendFile(localDirPath, remoteDirPath);
+
+        // Replace the migrations folder on the EC2 instance with the local migrations folder
+        localDirPath = process.cwd() + "/pnpd_data/migrations";
+        remoteDirPath = "/home/ubuntu/server/pnpd_data/migrations";
+        await sshClient.syncFiles(localDirPath, remoteDirPath, "schema");
         break;
     }
 
     await sshClient.runCommand("restart");
-
     sshClient.closeConnection();
 
     spinner.succeed(ui.colorSuccess("Project Updated Successfully!"));
 
     ui.space();
   } catch (err) {
+    spinner.fail(ui.colorError("Error updating project"));
     console.log(err);
   }
 };

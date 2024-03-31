@@ -31,6 +31,12 @@ export default class AWSClient {
     Owners: ["099720109477"], // Canonical's owner ID remains the same
   };
 
+  /**
+   * Constructor for the AWSClient class
+   * @param {string} region - The AWS region to use
+   * @param {object} spinner - The ora spinner object to use for logging
+   * @param {string} instanceId - Optional - The ID of the EC2 instance to manage
+   */
   constructor(region, spinner, instanceId) {
     // Properties set during initialization
     this.region = region;
@@ -99,6 +105,10 @@ export default class AWSClient {
     this.sandwhich = "blt";
   }
 
+  /**
+   * Method to get the EC2 metadata for the instance
+   * @returns {object} - The EC2 metadata for the instance
+   */
   getEC2MetaData() {
     return {
       publicIpAddress: this.publicIpAddress,
