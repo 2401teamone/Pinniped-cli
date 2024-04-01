@@ -13,7 +13,24 @@ import { writeFile } from "fs/promises";
 export default class AWSClient {
   static USERNAME = "ubuntu";
   static SECURITY_GROUP = "Pinniped-Security";
-  static IMAGE_PARAMS = {
+  static IMAGE_PARAMS_ARM64 = {
+    Filters: [
+      {
+        Name: "architecture",
+        Values: ["arm64"],
+      },
+      {
+        Name: "name",
+        Values: ["*ubuntu/images/*ubuntu-jammy-22.04-arm64-server-*"],
+      },
+      {
+        Name: "state",
+        Values: ["available"],
+      },
+    ],
+    Owners: ["099720109477"], // Canonical's owner ID remains the same
+  };
+  static IMAGE_PARAMS_X86_64 = {
     Filters: [
       {
         Name: "architecture",
@@ -241,7 +258,11 @@ export default class AWSClient {
    */
   async getAmiId() {
     try {
-      const command = new DescribeImagesCommand(AWSClient.IMAGE_PARAMS);
+      const filterParams = this.instanceType.includes("t4g")
+        ? AWSClient.IMAGE_PARAMS_ARM64
+        : AWSClient.IMAGE_PARAMS_X86_64;
+
+      const command = new DescribeImagesCommand(filterParams);
       const amiIds = await this.ec2Client.send(command);
 
       // Sort images by creation date in descending order

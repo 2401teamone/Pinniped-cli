@@ -35,12 +35,17 @@ export const regions = [
 ];
 
 export const instanceTypes = [
-  { name: "t4g.nano", value: "t4g.nano" },
+  { name: "t2.micro", value: "t2.micro" },
   { name: "t4g.micro", value: "t4g.micro" },
+  { name: "t2.small", value: "t2.small" },
   { name: "t4g.small", value: "t4g.small" },
+  { name: "t2.medium", value: "t2.medium" },
   { name: "t4g.medium", value: "t4g.medium" },
+  { name: "t2.large", value: "t2.large" },
   { name: "t4g.large", value: "t4g.large" },
+  { name: "t2.xlarge", value: "t2.xlarge" },
   { name: "t4g.xlarge", value: "t4g.xlarge" },
+  { name: "t2.2xlarge", value: "t2.2xlarge" },
   { name: "t4g.2xlarge", value: "t4g.2xlarge" },
 ];
 

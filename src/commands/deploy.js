@@ -57,7 +57,7 @@ const deploy = async (agrv) => {
     const remoteDirPath = "/home/ubuntu/server";
 
     const sshClient = new SSHClient(EC2MetaData[answers.instance], spinner);
-    await sshClient.syncFiles(localDirPath, remoteDirPath, "full");
+    await sshClient.syncFiles(localDirPath, remoteDirPath, "all");
 
     await sshClient.connect();
     await sshClient.runCommand("installDependencies");
