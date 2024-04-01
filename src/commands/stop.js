@@ -1,4 +1,3 @@
-// Purpose: Deploy the project to the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
 import { readEC2MetaData, getInstanceChoices } from "../utils/instanceData.js";
@@ -37,7 +36,6 @@ const stop = async () => {
   ]);
 
   try {
-    //start a loading spinner
     const spinner = ui.runSpinner(
       ui.colorStandard(
         `Connecting to AWS EC2 instance. This may take a few seconds...`
@@ -52,9 +50,6 @@ const stop = async () => {
     sshClient.closeConnection();
 
     spinner.succeed(ui.colorSuccess("Project Stopped Successfully!"));
-
-    ui.space();
-    ui.print("Run `pinniped start` to restart your application when ready.");
     ui.space();
   } catch (err) {
     console.log(err);

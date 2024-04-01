@@ -1,4 +1,3 @@
-// Purpose: Update the project on the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
 import { getInstanceChoices, readEC2MetaData } from "../utils/instanceData.js";
@@ -68,7 +67,6 @@ const update = async () => {
   const type = ui.updateOptions[answers.type].type;
   ui.commandHeader(COMMAND_HEADER_MSG + ` - Type: ${type}`);
 
-  //start a loading spinner
   const spinner = ui.runSpinner(
     ui.colorStandard(
       `Connecting to AWS EC2 instance. This may take a few seconds...`
@@ -85,7 +83,7 @@ const update = async () => {
     let remoteDirPath;
 
     switch (type) {
-      case "full":
+      case "all":
         localDirPath = process.cwd();
         remoteDirPath = "/home/ubuntu/server";
         await sshClient.syncFiles(localDirPath, remoteDirPath, type);
@@ -124,7 +122,6 @@ const update = async () => {
     sshClient.closeConnection();
 
     spinner.succeed(ui.colorSuccess("Project Updated Successfully!"));
-
     ui.space();
   } catch (err) {
     spinner.fail(ui.colorError("Error updating project"));

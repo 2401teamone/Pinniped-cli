@@ -87,6 +87,11 @@ export const commandHeader = (message) => {
   console.log(colorStandard(message));
   divider(80);
 };
+
+export const commandExitMsg = (message) => {
+  print("\n" + message + "\n");
+};
+
 export const printSuccess = (message) => {
   console.log(colorSuccess(message));
 };
@@ -150,24 +155,28 @@ const welcome = (answers) => {
 
 export const info = () => {
   const message = [
-    "Pinniped is a lightweight, extendable backend for conveniently creating and deploying projects.",
+    "----------------- Welcome to Pinniped! -----------------",
     "\n",
-    "----------- Pinniped CLI Commands ------------",
-    "Run `pinniped create` to create a new project.",
-    "Run `pinniped deploy` to deploy a project to an AWS EC2 instance.",
+    "Pinniped is a lightweight, extendable backend for conveniently creating",
+    "and deploying web applications.",
     "\n",
-    "------- Development and Build Commands -------",
-
-    "Run `npm start` to run the backend.",
-    "Run `npm run dev` to run the backend with nodemon enabled for ease of development.",
-    "Run `npm build` inside your project directory to minify your server into the `dist` folder.",
-    "Run `npm run prod` to run your built server from the `dist` folder.",
+    "--------- Development / Local project Commands ---------",
     "\n",
-    "------------- Database Commands --------------",
-    "Run `npm reset-all` to reset the main database, sessions, and migrations.",
-    "Run `npm reset-db` to reset the main database.",
-    "Run `npm reset-sessions` to reset the sessions database.",
-    "Run `npm reset-migrations` to reset the migrations database.",
+    "pinniped create: Creates a new pinniped project.",
+    "npm start: Runs your pinniped project.",
+    "npm run dev: Runs your project with nodemon enabled for ease of development.",
+    "npm reset-all: Resets the main database, sessions, and migrations.",
+    "npm reset-db: Resets the main database.",
+    "npm reset-sessions: Resets the sessions database.",
+    "npm reset-migrations: Resets the migrations in the pnpd.db file and migrtions folder.",
+    "\n",
+    "----------- Pinniped AWS Deployment Commands ------------",
+    "\n",
+    "pinniped provision: Provisions an AWS EC2 instance.",
+    "pinniped deploy: Deploys your project to an AWS EC2 instance.",
+    "pinniped start: Starts your project on your EC2 instance using pm2.",
+    "pinniped stop: Stops your project on your EC2 instance using pm2.",
+    "pinniped update: Updates your project on your EC2 instance.",
   ];
 
   print(fullLogo100);
@@ -175,6 +184,7 @@ export const info = () => {
 };
 
 export default {
+  commandExitMsg,
   space,
   colorStandard,
   colorSuccess,

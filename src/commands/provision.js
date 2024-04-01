@@ -1,4 +1,3 @@
-// Purpose: This file contains the code to provision an EC2 instance on AWS
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
 import setFilePermissions from "../utils/setFilePermissions.js";
@@ -9,8 +8,6 @@ const COMMAND_HEADER_MSG = "Pinniped Provision";
 
 const provision = async (agrv) => {
   ui.commandHeader(COMMAND_HEADER_MSG);
-
-  // Get the region and instance type from the user
   let answers = await inquirer.prompt([
     {
       type: "list",
@@ -91,13 +88,10 @@ const provision = async (agrv) => {
     sshClient.closeConnection();
 
     spinner.succeed(ui.colorSuccess("Ec2 instance provisioned successfully"));
-
-    ui.space();
-    ui.print(
+    ui.commandExitMsg(
       "  EC2 instance details are available in the `instanceData.json` file in your project directory\n" +
         "  Run `pinniped deploy` to deploy the project to the EC2 instance"
     );
-    ui.space();
   } catch (err) {
     console.log(err);
     spinner.fail(ui.colorError("Provisioning failed"));

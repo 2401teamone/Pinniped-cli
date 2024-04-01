@@ -1,4 +1,3 @@
-// Purpose: Deploy the project to the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
 import { readEC2MetaData, getInstanceChoices } from "../utils/instanceData.js";
@@ -57,9 +56,6 @@ const deploy = async () => {
     sshClient.closeConnection();
 
     spinner.succeed(ui.colorSuccess("Project Deployed Successfully!"));
-
-    ui.space();
-    ui.print("Run `pinniped start` to start your server on the EC2 instance");
     ui.space();
   } catch (err) {
     console.log(err);
