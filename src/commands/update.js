@@ -1,20 +1,13 @@
 // Purpose: Update the project on the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
-import { readEC2MetaData } from "../utils/instanceData.js";
+import { getInstanceChoices, readEC2MetaData } from "../utils/instanceData.js";
 import SSHClient from "../models/sshClient.js";
 const COMMAND_HEADER_MSG = "Pinniped Update";
 
-const update = async (agrv) => {
+const update = async () => {
   const EC2MetaData = await readEC2MetaData();
-
-  const instanceChoices = EC2MetaData.map((instance, idx) => ({
-    name:
-      idx === 0
-        ? `${instance.publicIpAddress} (Most Recent)`
-        : instance.publicIpAddress,
-    value: idx,
-  }));
+  const instanceChoices = await getInstanceChoices();
 
   ui.commandHeader(COMMAND_HEADER_MSG);
 
@@ -43,7 +36,7 @@ const update = async (agrv) => {
     {
       type: "list",
       name: "instance",
-      message: "Select the IP address of the EC2 instance to update: \n",
+      message: "Select the EC2 instance to update: \n\n",
       choices: instanceChoices,
     },
     {

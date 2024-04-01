@@ -16,6 +16,22 @@ export async function readEC2MetaData() {
   }
 }
 
+export async function getInstanceChoices() {
+  const EC2MetaData = await readEC2MetaData();
+
+  return EC2MetaData.map((instance, idx) => ({
+    name:
+      idx === 0
+        ? `IP: ${
+            instance.publicIpAddress
+          } - EC2 Name: ${instance.privateKeyPath.slice(0, -4)} (Most Recent)`
+        : `IP: ${
+            instance.publicIpAddress
+          } - EC2 Name: ${instance.privateKeyPath.slice(0, -4)}`,
+    value: idx,
+  }));
+}
+
 export async function EC2NameIsUnique(EC2Name) {
   const instanceData = await readEC2MetaData();
   console.log(instanceData);

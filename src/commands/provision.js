@@ -2,15 +2,9 @@
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
 import setFilePermissions from "../utils/setFilePermissions.js";
-import {
-  storeEC2MetaData,
-  EC2NameIsUnique,
-  readEC2MetaData,
-} from "../utils/instanceData.js";
+import { storeEC2MetaData } from "../utils/instanceData.js";
 import SSHClient from "../models/sshClient.js";
 import AWSClient from "../models/awsClient.js";
-import { readFile } from "fs/promises";
-import { EC2 } from "@aws-sdk/client-ec2";
 const COMMAND_HEADER_MSG = "Pinniped Provision";
 
 const provision = async (agrv) => {
@@ -41,9 +35,8 @@ const provision = async (agrv) => {
     },
   ]);
 
-  let nameAnswer;
   if (answers.EC2Name === "Enter a different name") {
-    nameAnswer = await inquirer.prompt([
+    let newAnswer = await inquirer.prompt([
       {
         type: "input",
         name: "EC2Name",
@@ -62,6 +55,7 @@ const provision = async (agrv) => {
         },
       },
     ]);
+    answers.EC2Name = newAnswer.EC2Name;
   }
 
   //start a loading spinner
@@ -74,9 +68,7 @@ const provision = async (agrv) => {
   try {
     const awsClient = new AWSClient(answers.region, spinner);
 
-    console.log(answers.instanceType, nameAnswer.EC2Name, answers.region);
-
-    await awsClient.provisionEC2(answers.instanceType, nameAnswer.EC2Name);
+    await awsClient.provisionEC2(answers.instanceType, answers.EC2Name);
 
     const EC2MetaData = awsClient.getEC2MetaData();
 

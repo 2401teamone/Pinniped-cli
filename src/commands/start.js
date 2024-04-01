@@ -1,11 +1,11 @@
 // Purpose: Deploy the project to the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
-import { readEC2MetaData } from "../utils/instanceData.js";
+import { readEC2MetaData, getInstanceChoices } from "../utils/instanceData.js";
 import SSHClient from "../models/sshClient.js";
 const COMMAND_HEADER_MSG = "Pinniped Start";
 
-const start = async (agrv) => {
+const start = async () => {
   ui.commandHeader(COMMAND_HEADER_MSG);
 
   let answers = await inquirer.prompt([
@@ -27,20 +27,13 @@ const start = async (agrv) => {
     return;
   }
   const EC2MetaData = await readEC2MetaData();
-
-  const instanceChoices = EC2MetaData.map((instance, idx) => ({
-    name:
-      idx === 0
-        ? `${instance.publicIpAddress} (Most Recent)`
-        : instance.publicIpAddress,
-    value: idx,
-  }));
+  const instanceChoices = await getInstanceChoices();
 
   answers = await inquirer.prompt([
     {
       type: "list",
       name: "instance",
-      message: "Select the IP address of the EC2 instance to start:",
+      message: "Select the EC2 instance to start: \n\n",
       choices: instanceChoices,
     },
   ]);
