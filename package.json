@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "pinniped-cli",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "CLI tool for Creating, Managing, and Deploying your Pinniped projects",
   "main": "./src/index.js",
   "scripts": {
@@ -40,6 +40,7 @@
     "inquirer": "^9.2.15",
     "ora": "^8.0.1",
     "ssh2": "^1.15.0",
+    "ssh2-sftp-client": "^10.0.3",
     "yargs": "^17.7.2"
   },
   "engines": {

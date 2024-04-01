@@ -1,11 +1,10 @@
-// Purpose: Deploy the project to the EC2 instance
 import inquirer from "inquirer";
 import ui from "../utils/ui.js";
-import { readEC2MetaData } from "../utils/instanceData.js";
+import { readEC2MetaData, getInstanceChoices } from "../utils/instanceData.js";
 import SSHClient from "../models/sshClient.js";
 const COMMAND_HEADER_MSG = "Pinniped Deploy";
 
-const deploy = async (agrv) => {
+const deploy = async () => {
   ui.commandHeader(COMMAND_HEADER_MSG);
 
   let answers = await inquirer.prompt([
@@ -27,20 +26,13 @@ const deploy = async (agrv) => {
   }
 
   const EC2MetaData = await readEC2MetaData();
-
-  const instanceChoices = EC2MetaData.map((instance, idx) => ({
-    name:
-      idx === 0
-        ? `${instance.publicIpAddress} (Most Recent)`
-        : instance.publicIpAddress,
-    value: idx,
-  }));
+  const instanceChoices = await getInstanceChoices();
 
   answers = await inquirer.prompt([
     {
       type: "list",
       name: "instance",
-      message: "Select the IP adress of the EC2 instance for deployment:",
+      message: "Select the EC2 instance for deployment: \n\n",
       choices: instanceChoices,
     },
   ]);
@@ -53,23 +45,17 @@ const deploy = async (agrv) => {
       )
     );
 
-    const sshClient = new SSHClient(EC2MetaData[answers.instance], spinner);
-
-    await sshClient.connect();
-
     const localDirPath = process.cwd();
     const remoteDirPath = "/home/ubuntu/server";
 
-    await sshClient.syncFiles(localDirPath, remoteDirPath, "full");
+    const sshClient = new SSHClient(EC2MetaData[answers.instance], spinner);
+    await sshClient.syncFiles(localDirPath, remoteDirPath, "all");
 
+    await sshClient.connect();
     await sshClient.runCommand("installDependencies");
-
     sshClient.closeConnection();
 
     spinner.succeed(ui.colorSuccess("Project Deployed Successfully!"));
-
-    ui.space();
-    ui.print("Run `pinniped start` to start your server on the EC2 instance");
     ui.space();
   } catch (err) {
     console.log(err);

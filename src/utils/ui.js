@@ -13,40 +13,47 @@ const BOX_COLOR = "blue";
 
 //DEPLOYMENT OPTIONS
 export const regions = [
-  "us-east-1",
-  "us-east-2",
-  "us-west-1",
-  "us-west-2",
-  "af-south-1",
-  "ap-east-1",
-  "ap-south-1",
-  "ap-northeast-2",
-  "ap-southeast-1",
-  "ap-southeast-2",
-  "ap-northeast-1",
-  "ca-central-1",
-  "eu-central-1",
-  "eu-west-1",
-  "eu-west-2",
-  "eu-west-3",
-  "eu-north-1",
-  "me-south-1",
-  "sa-east-1",
+  { name: "us-east-1", value: "us-east-1" },
+  { name: "us-east-2", value: "us-east-2" },
+  { name: "us-west-1", value: "us-west-1" },
+  { name: "us-west-2", value: "us-west-2" },
+  { name: "af-south-1", value: "af-south-1" },
+  { name: "ap-east-1", value: "ap-east-1" },
+  { name: "ap-south-1", value: "ap-south-1" },
+  { name: "ap-northeast-2", value: "ap-northeast-2" },
+  { name: "ap-southeast-1", value: "ap-southeast-1" },
+  { name: "ap-southeast-2", value: "ap-southeast-2" },
+  { name: "ap-northeast-1", value: "ap-northeast-1" },
+  { name: "ca-central-1", value: "ca-central-1" },
+  { name: "eu-central-1", value: "eu-central-1" },
+  { name: "eu-west-1", value: "eu-west-1" },
+  { name: "eu-west-2", value: "eu-west-2" },
+  { name: "eu-west-3", value: "eu-west-3" },
+  { name: "eu-north-1", value: "eu-north-1" },
+  { name: "me-south-1", value: "me-south-1" },
+  { name: "sa-east-1", value: "sa-east-1" },
 ];
 
 export const instanceTypes = [
-  "t2.micro",
-  "t2.medium",
-  "t2.large",
-  "t2.xlarge",
-  "t2.2xlarge",
+  { name: "t2.micro", value: "t2.micro" },
+  { name: "t4g.micro", value: "t4g.micro" },
+  { name: "t2.small", value: "t2.small" },
+  { name: "t4g.small", value: "t4g.small" },
+  { name: "t2.medium", value: "t2.medium" },
+  { name: "t4g.medium", value: "t4g.medium" },
+  { name: "t2.large", value: "t2.large" },
+  { name: "t4g.large", value: "t4g.large" },
+  { name: "t2.xlarge", value: "t2.xlarge" },
+  { name: "t4g.xlarge", value: "t4g.xlarge" },
+  { name: "t2.2xlarge", value: "t2.2xlarge" },
+  { name: "t4g.2xlarge", value: "t4g.2xlarge" },
 ];
 
 export const updateOptions = [
   {
-    type: "full",
+    type: "all",
     value: 0,
-    name: "Full\n - Update the server, frontend, dependencies, database, and migrations to match your local project\n",
+    name: "All\n - Update the backend, frontend, dependencies, database, and migrations to match your local project\n",
   },
   {
     type: "frontend",
@@ -54,9 +61,9 @@ export const updateOptions = [
     name: "Frontend\n - Update the frontend to match your local project's dist folder\n",
   },
   {
-    type: "server",
+    type: "backend",
     value: 2,
-    name: "Server\n - Update the all non-database, non frontend files to match your local project, and update dependencies\n",
+    name: "Backend\n - Update the all non-database, non frontend files to match your local project, and update dependencies\n",
   },
   {
     type: "schema",
@@ -66,7 +73,7 @@ export const updateOptions = [
   {
     type: "database",
     value: 4,
-    name: "Database\n - Update the pnpd.db file to match your local pnpd.db file\n",
+    name: "Database\n - Update the pnpd.db file to match your local pnpd.db file, and update schema migrations\n",
   },
 ];
 
@@ -80,6 +87,11 @@ export const commandHeader = (message) => {
   console.log(colorStandard(message));
   divider(80);
 };
+
+export const commandExitMsg = (message) => {
+  print("\n" + message + "\n");
+};
+
 export const printSuccess = (message) => {
   console.log(colorSuccess(message));
 };
@@ -143,24 +155,28 @@ const welcome = (answers) => {
 
 export const info = () => {
   const message = [
-    "Pinniped is a lightweight, extendable backend for conveniently creating and deploying projects.",
+    "----------------- Welcome to Pinniped! -----------------",
     "\n",
-    "----------- Pinniped CLI Commands ------------",
-    "Run `pinniped create` to create a new project.",
-    "Run `pinniped deploy` to deploy a project to an AWS EC2 instance.",
+    "Pinniped is a lightweight, extendable backend for conveniently creating",
+    "and deploying web applications.",
     "\n",
-    "------- Development and Build Commands -------",
-
-    "Run `npm start` to run the backend.",
-    "Run `npm run dev` to run the backend with nodemon enabled for ease of development.",
-    "Run `npm build` inside your project directory to minify your server into the `dist` folder.",
-    "Run `npm run prod` to run your built server from the `dist` folder.",
+    "--------- Development / Local project Commands ---------",
     "\n",
-    "------------- Database Commands --------------",
-    "Run `npm reset-all` to reset the main database, sessions, and migrations.",
-    "Run `npm reset-db` to reset the main database.",
-    "Run `npm reset-sessions` to reset the sessions database.",
-    "Run `npm reset-migrations` to reset the migrations database.",
+    "pinniped create: Creates a new pinniped project.",
+    "npm start: Runs your pinniped project.",
+    "npm run dev: Runs your project with nodemon enabled for ease of development.",
+    "npm reset-all: Resets the main database, sessions, and migrations.",
+    "npm reset-db: Resets the main database.",
+    "npm reset-sessions: Resets the sessions database.",
+    "npm reset-migrations: Resets the migrations in the pnpd.db file and migrtions folder.",
+    "\n",
+    "----------- Pinniped AWS Deployment Commands ------------",
+    "\n",
+    "pinniped provision: Provisions an AWS EC2 instance.",
+    "pinniped deploy: Deploys your project to an AWS EC2 instance.",
+    "pinniped start: Starts your project on your EC2 instance using pm2.",
+    "pinniped stop: Stops your project on your EC2 instance using pm2.",
+    "pinniped update: Updates your project on your EC2 instance.",
   ];
 
   print(fullLogo100);
@@ -168,6 +184,7 @@ export const info = () => {
 };
 
 export default {
+  commandExitMsg,
   space,
   colorStandard,
   colorSuccess,
