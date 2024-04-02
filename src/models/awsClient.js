@@ -28,7 +28,7 @@ export default class AWSClient {
         Values: ["available"],
       },
     ],
-    Owners: ["099720109477"], // Canonical's owner ID remains the same
+    Owners: ["099720109477"],
   };
   static IMAGE_PARAMS_X86_64 = {
     Filters: [
@@ -45,7 +45,7 @@ export default class AWSClient {
         Values: ["available"],
       },
     ],
-    Owners: ["099720109477"], // Canonical's owner ID remains the same
+    Owners: ["099720109477"],
   };
 
   /**
@@ -119,7 +119,6 @@ export default class AWSClient {
     this.amiId = instanceData.ImageId;
     this.instanceType = instanceData.InstanceType;
     this.keyName = instanceData.KeyName;
-    this.sandwhich = "blt";
   }
 
   /**
@@ -272,7 +271,7 @@ export default class AWSClient {
 
       if (sortedImages.length > 0) {
         this.spinner.text = `Image found: ${sortedImages[0].ImageId}`;
-        return sortedImages[0].ImageId; // Return the most recent AMI ID
+        return sortedImages[0].ImageId;
       } else {
         throw new Error("No suitable AMI found.");
       }
@@ -294,7 +293,6 @@ export default class AWSClient {
       KeyName: keyName,
       MaxCount: 1,
       MinCount: 1,
-      // SecurityGroups: [AWSClient.SECURITY_GROUP],
       SecurityGroupIds: [securityGroupID],
     };
 
@@ -311,11 +309,8 @@ export default class AWSClient {
 
       // Poll the EC2 instance state until it is "running"
       while (this.instanceState !== "running") {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         await this.syncEC2State();
-
-        if (this.instanceState !== "running") {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
       }
 
       this.spinner.text = "Instance is now running";
