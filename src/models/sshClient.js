@@ -81,7 +81,7 @@ export default class SSHClient {
       });
     } catch (error) {
       if (attemptNum < retryLimit) {
-        this.spinner.text = `Connection failed. Retrying in 5 seconds... Attempt ${attemptNum}`;
+        this.spinner.text = `Connecting...`;
 
         // Wait 5 seconds before retrying
         await new Promise((resolve) => setTimeout(resolve, 5000));

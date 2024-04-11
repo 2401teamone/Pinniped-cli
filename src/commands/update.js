@@ -15,10 +15,10 @@ const update = async () => {
       type: "confirm",
       name: "proceed",
       message:
-        "This command will: \n" +
-        "  1. Stop your app running on your EC2 instance if it is running. \n" +
-        "  2. Update files on your EC2 instance to match your local project directory. \n" +
-        "  3. Re-start your app.  \n\n" +
+        "This command will:\n" +
+        "  1. Stop your app running on your EC2 instance if it is running.\n" +
+        "  2. Update files on your EC2 instance to match your local project.\n" +
+        "  3. Re-start your app.\n\n" +
         "     Would you like to proceed?",
     },
   ]);

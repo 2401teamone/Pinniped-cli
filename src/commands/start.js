@@ -12,8 +12,8 @@ const start = async () => {
       type: "confirm",
       name: "proceed",
       message:
-        "This command will start your deployed application using pm2 process manager\n" +
-        "  on your provisioned EC2 instance.\n\n" +
+        "This command will start your deployed application using\n" +
+        "  pm2 process manager on your provisioned EC2 instance.\n\n" +
         "  Would you like to proceed?",
     },
   ]);

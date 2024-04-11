@@ -85,7 +85,7 @@ export const print = (message) => {
 export const commandHeader = (message) => {
   console.clear();
   console.log(colorStandard(message));
-  divider(80);
+  divider(65);
 };
 
 export const commandExitMsg = (message) => {
@@ -99,7 +99,7 @@ export const printError = (message) => {
   console.log(colorError(message));
 };
 
-export const divider = (length = 80, newLine) => {
+export const divider = (length = 65, newLine) => {
   let div = colorStandard("-".repeat(length));
   if (newLine) div += "\n";
   console.log(div);

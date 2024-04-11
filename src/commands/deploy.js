@@ -12,8 +12,9 @@ const deploy = async () => {
       type: "confirm",
       name: "proceed",
       message:
-        "This command will send the project files from your current working\n" +
-        "  directory to your provisioned EC2 instance and install dependecies.\n\n" +
+        "This command will send the project files from your current\n" +
+        "  working directory to your provisioned EC2 instance\n" +
+        "  and install dependecies.\n\n" +
         "  Would you like to proceed?",
     },
   ]);
