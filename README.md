@@ -1,11 +1,11 @@
 # Pinniped-CLI
 
-An easy to use CLI tool for creating, managing, and deploying your Pinniped projects.
+An easy-to-use CLI tool for creating, managing, and deploying your Pinniped projects.
 
 ## Setup
 
 - run `npm install pinniped-cli -g` to install Pinniped-cli globally
-- navigate to a directory where you'd like to create a new Pinniped project
+- navigate to a directory where you'd like to create a new Pinniped project.
 - run `pinniped create` and follow the prompts.
 
 ## Commands
@@ -22,7 +22,7 @@ An easy to use CLI tool for creating, managing, and deploying your Pinniped proj
     
 - `npm start`
   
-  - Runs your local pinniped project using node.
+  - Runs your local pinniped project using Node.
   
 - `npm run dev`
   
@@ -42,7 +42,7 @@ An easy to use CLI tool for creating, managing, and deploying your Pinniped proj
  
 - `npm run reset-migrations`
   
-  - Removes all migration files from your local project and resets the corresponding migrations table entries in the main `pnpd.db` database file
+  - Removes all migration files from your local project and resets the corresponding migrations table entries in the main `pnpd.db` database file.
 
 ### AWS EC2 Instance Deployment and Application Updates
 
@@ -66,12 +66,12 @@ An easy to use CLI tool for creating, managing, and deploying your Pinniped proj
   
 	- Updates your pinniped application on your EC2 instance to match your local pinniped application, allowing you to select your update type.
    
-      All - Update the backend, frontend, dependencies, database, and migrations to match your local project
+      	- All: Update the backend, frontend, dependencies, database, and migrations to match your local project.
  
-      Frontend - Update the frontend to match your local project's dist folder
+        - Frontend: Update the frontend to match your project's local `dist` folder.
  
-      Backend - Update all non-database, non-frontend files to match your local project, and update dependencies
+        - Backend: Update all non-database, non-frontend files to match your local project, and update dependencies.
  
-      Schema - Update the database schema to match the migrations in your local pnpd_data/migrations folder
+      	- Schema: Update the database schema to match the migrations in your local pnpd_data/migrations folder.
  
-      Database - Update the pnpd.db file to match your local `pnpd.db` file, and update schema migrations
+      	- Database: Update the `pnpd.db` file to match your local `pnpd.db` file, and update schema migrations.
