@@ -19,7 +19,7 @@ const stop = async () => {
 
   if (!answers.proceed) {
     console.log(
-      "\n  Stop command cancelled. \n  Please run `pinniped info` help using this cli.\n"
+      "\n  Stop command cancelled. \n  Please run `pinniped info` help using this CLI.\n"
     );
     return;
   }
@@ -49,7 +49,7 @@ const stop = async () => {
 
     sshClient.closeConnection();
 
-    spinner.succeed(ui.colorSuccess("Project Stopped Successfully!"));
+    spinner.succeed(ui.colorSuccess("Project stopped successfully!"));
     ui.space();
   } catch (err) {
     console.log(err);

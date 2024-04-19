@@ -20,7 +20,7 @@ const deploy = async () => {
 
   if (!answers.proceed) {
     console.log(
-      "\n  Deploy command cancelled. \n  Please run `pinniped info` help using this cli.\n"
+      "\n  Deploy command cancelled. \n  Please run `pinniped info` help using this CLI.\n"
     );
     return;
   }
@@ -55,7 +55,7 @@ const deploy = async () => {
     await sshClient.runCommand("installDependencies");
     sshClient.closeConnection();
 
-    spinner.succeed(ui.colorSuccess("Project Deployed Successfully!"));
+    spinner.succeed(ui.colorSuccess("Project deployed successfully!"));
     ui.space();
   } catch (err) {
     console.log(err);
