@@ -75,3 +75,6 @@ An easy-to-use CLI tool for creating, managing, and deploying your Pinniped proj
       	- Schema: Update the database schema to match the migrations in your local pnpd_data/migrations folder.
  
       	- Database: Update the `pnpd.db` file to match your local `pnpd.db` file, and update schema migrations.
+  
+### Security
+By default the EC2 instance is configured to only accept http and https traffic (ports 80 and 443) as well as SSH traffic (port 22). Please further configure and harden the instance as your security needs require.
