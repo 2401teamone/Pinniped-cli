@@ -11,8 +11,8 @@ const create = async (argv) => {
       type: "confirm",
       name: "proceed",
       message:
-        "This command will initialize a new pinniped project directory in your\n" +
-        "  current working directory.\n\n" +
+        "This command will initialize a new pinniped project\n" +
+        "  directory in your current working directory.\n\n" +
         "  Would you like to proceed?",
     },
   ]);

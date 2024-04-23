@@ -12,7 +12,8 @@ const stop = async () => {
       type: "confirm",
       name: "proceed",
       message:
-        "This command will stop your deployed application using pm2 process manager.\n\n" +
+        "This command will stop your deployed application using\n" +
+        "  pm2 process manager.\n\n" +
         "  Would you like to proceed?",
     },
   ]);

@@ -89,8 +89,9 @@ const provision = async (agrv) => {
 
     spinner.succeed(ui.colorSuccess("EC2 instance provisioned successfully"));
     ui.commandExitMsg(
-      "  EC2 instance details are available in the `instanceData.json` file in your project directory\n" +
-        "  Run `pinniped deploy` to deploy the project to the EC2 instance"
+      "  EC2 instance details are available in the `instanceData.json`\n" +
+        "  file in your project directory.\n\n" +
+        "  Run `pinniped deploy` to deploy your project to the EC2 instance"
     );
   } catch (err) {
     console.log(err);
