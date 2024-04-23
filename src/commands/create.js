@@ -19,7 +19,7 @@ const create = async (argv) => {
 
   if (!answers.proceed) {
     console.log(
-      "\n  Create command cancelled. \n  Please run `pinniped info` help using this cli.\n"
+      "\n  Create command cancelled. \n  Please run `pinniped info` help using this CLI.\n"
     );
     return;
   }
@@ -49,7 +49,7 @@ const create = async (argv) => {
     ui.space();
   } catch (err) {
     console.error("Error copying example project directory:", err);
-    spinner.fail(ui.colorError("Project creation failed"));
+    spinner.fail(ui.colorError("Project creation failed."));
   }
 };
 

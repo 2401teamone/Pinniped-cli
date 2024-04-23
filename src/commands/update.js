@@ -25,7 +25,7 @@ const update = async () => {
 
   if (!answers.proceed) {
     console.log(
-      "\n  Update command cancelled. \n  Please run `pinniped info` help using this cli.\n"
+      "\n  Update command cancelled. \n  Please run `pinniped info` help using this CLI.\n"
     );
     return;
   }
@@ -59,7 +59,7 @@ const update = async () => {
 
   if (!finalCheck.proceed) {
     console.log(
-      "\n  Update command cancelled. \n  Please run `pinniped info` help using this cli.\n"
+      "\n  Update command cancelled. \n  Please run `pinniped info` help using this CLI.\n"
     );
     return;
   }
@@ -121,10 +121,10 @@ const update = async () => {
     await sshClient.runCommand("restart");
     sshClient.closeConnection();
 
-    spinner.succeed(ui.colorSuccess("Project Updated Successfully!"));
+    spinner.succeed(ui.colorSuccess("Project updated successfully!"));
     ui.space();
   } catch (err) {
-    spinner.fail(ui.colorError("Error updating project"));
+    spinner.fail(ui.colorError("Error updating project."));
     console.log(err);
   }
 };

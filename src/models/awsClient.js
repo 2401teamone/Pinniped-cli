@@ -72,7 +72,7 @@ export default class AWSClient {
   }
 
   /**
-   *  Method to provision an EC2 instance with the specified parameters
+   * Method to provision an EC2 instance with the specified parameters
    * @returns {Promise<void>} - Resolves when provisioning is complete
    * @throws {Error} - If an error occurs during provisioning
    */

@@ -25,7 +25,7 @@ const provision = async (agrv) => {
       type: "list",
       name: "EC2Name",
       message:
-        "Choose a name for your EC2 instance and cooresponding ssh key: \n\n ",
+        "Choose a name for your EC2 instance and corresponding ssh key: \n\n ",
       choices: [process.cwd().split("/").pop(), "Enter a different name"].map(
         (name) => ({ name: name, value: name })
       ),
@@ -87,7 +87,7 @@ const provision = async (agrv) => {
 
     sshClient.closeConnection();
 
-    spinner.succeed(ui.colorSuccess("Ec2 instance provisioned successfully"));
+    spinner.succeed(ui.colorSuccess("EC2 instance provisioned successfully"));
     ui.commandExitMsg(
       "  EC2 instance details are available in the `instanceData.json`\n" +
         "  file in your project directory.\n\n" +
